@@ -13,6 +13,12 @@ def np_elementwise(mat1, mat2):
         mat2 (numpy.ndarray or scalar): The second array or scalar.
 
     Returns:
-        tuple: A tuple containing element-wise sum, difference, product, and quotient.
+        tuple: A tuple containing element-wise sum, difference, product,
+               and quotient.
     """
-    return mat1 + mat2, mat1 - mat2, mat1 * mat2, mat1 / mat2
+    return (
+        mat1 + mat2,
+        mat1 - mat2,
+        mat1 * mat2,
+        mat1 / mat2
+    )
