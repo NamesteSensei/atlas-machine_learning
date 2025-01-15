@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
+
 """
 This module performs matrix multiplication on two NumPy arrays.
 """
+
+import numpy as np  # Import placed correctly at the top of the file
 
 
 def np_matmul(mat1, mat2):
@@ -15,5 +18,4 @@ def np_matmul(mat1, mat2):
     Returns:
         numpy.ndarray: The result of matrix multiplication.
     """
-    import numpy as np
     return np.matmul(mat1, mat2)
