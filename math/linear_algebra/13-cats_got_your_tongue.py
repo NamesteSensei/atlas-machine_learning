@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
+
 """
 This module concatenates two NumPy arrays along a specific axis.
 """
+
+import numpy as np
 
 
 def np_cat(mat1, mat2, axis=0):
@@ -16,5 +19,4 @@ def np_cat(mat1, mat2, axis=0):
     Returns:
         numpy.ndarray: The concatenated matrix.
     """
-    import numpy as np
     return np.concatenate((mat1, mat2), axis=axis)
