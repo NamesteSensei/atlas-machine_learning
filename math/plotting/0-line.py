@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
+"""
+Module to plot a line graph of y = x^3.
+"""
+
 import matplotlib  # Import matplotlib for setting the backend
-matplotlib.use('TkAgg')  # Use TkAgg backend for GUI plots
 import numpy as np  # Import numpy for numerical calculations
 import matplotlib.pyplot as plt  # Import pyplot for plotting
+
+# Set the backend for matplotlib before any other matplotlib code
+matplotlib.use('TkAgg')
+
 
 def line():
     """
@@ -16,4 +23,6 @@ def line():
     plt.title("Line Graph: y = x^3")  # Title of the graph
     plt.show()  # Display the plot
 
-line()  # Call the function to create the plot
+
+if __name__ == "__main__":
+    line()  # Call the function to create the plot
