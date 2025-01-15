@@ -7,3 +7,4 @@ mat3 = [row[-3:] for row in matrix[-3:]]
 print(f"The middle two rows of the matrix are:\n{mat1}")
 print(f"The middle two columns of the matrix are:\n{mat2}")
 print(f"The bottom-right, square, 3x3 matrix is:\n{mat3}")
+
