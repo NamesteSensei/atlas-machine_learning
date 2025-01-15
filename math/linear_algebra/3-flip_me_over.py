@@ -3,6 +3,7 @@
 This module contains a function to transpose a 2D matrix.
 """
 
+
 def matrix_transpose(matrix):
     """
     Returns the transpose of a 2D matrix.
@@ -13,5 +14,7 @@ def matrix_transpose(matrix):
     Returns:
         list of lists: A new 2D matrix that is the transpose of the input matrix.
     """
-    # Transpose the matrix using list comprehension
-    return [[row[i] for row in matrix] for i in range(len(matrix[0]))]
+    return [
+        [row[i] for row in matrix]  # E201 fixed: No extra space after '['
+        for i in range(len(matrix[0]))
+    ]
