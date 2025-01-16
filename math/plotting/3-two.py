@@ -1,28 +1,43 @@
 #!/usr/bin/env python3
-import matplotlib
-matplotlib.use('TkAgg')  # Use TkAgg backend for GUI plots
-import numpy as np  # Import numpy for numerical calculations
-import matplotlib.pyplot as plt  # Import pyplot for plotting
+"""
+This module plots exponential decay graphs for two radioactive elements.
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 def two():
     """
-    Plots two exponential decay curves on the same graph.
+    Plots two exponential decay graphs for C-14 and Ra-226.
+
+    The graph:
+    - Displays fraction remaining of C-14 and Ra-226 over time.
+    - Includes:
+        - X-axis labeled 'Time (years)'.
+        - Y-axis labeled 'Fraction Remaining'.
+        - Title: 'Exponential Decay of Radioactive Elements'.
+        - Legend identifying C-14 and Ra-226.
     """
-    x = np.arange(0, 21000, 1000)  # Time values (0 to 20000 in steps of 1000)
-    r = np.log(0.5)  # Decay constant for half-life
-    t1 = 5730  # Half-life of C-14
-    t2 = 1600  # Half-life of Ra-226
-    y1 = np.exp((r / t1) * x)  # Exponential decay for C-14
-    y2 = np.exp((r / t2) * x)  # Exponential decay for Ra-226
+    x = np.arange(0, 21000, 1000)  # Time points
+    r = np.log(0.5)  # Decay constant
 
-    plt.plot(x, y1, 'r--', label="C-14")  # Red dashed line for C-14
-    plt.plot(x, y2, 'g-', label="Ra-226")  # Green solid line for Ra-226
-    plt.legend(loc="upper right")  # Add legend in the upper right corner
-    plt.xlabel("Time (years)")  # Label for the x-axis
-    plt.ylabel("Fraction Remaining")  # Label for the y-axis
-    plt.title("Exponential Decay of Radioactive Elements")  # Title
-    plt.xlim(0, 20000)  # Set x-axis range
-    plt.ylim(0, 1)  # Set y-axis range
-    plt.show()  # Display the plot
+    # Half-lives
+    t_c14 = 5730  # C-14
+    t_ra226 = 1600  # Ra-226
 
-two()  # Call the function to create the plot
+    # Fraction remaining calculations
+    y_c14 = np.exp((r / t_c14) * x)
+    y_ra226 = np.exp((r / t_ra226) * x)
+
+    # Create the plot
+    plt.figure(figsize=(6.4, 4.8))
+    plt.plot(x, y_c14, 'r--', label="C-14")  # Dashed red line for C-14
+    plt.plot(x, y_ra226, 'g-', label="Ra-226")  # Solid green line for Ra-226
+    plt.xlim(0, 20000)  # X-axis range
+    plt.ylim(0, 1)  # Y-axis range
+    plt.xlabel("Time (years)")
+    plt.ylabel("Fraction Remaining")
+    plt.title("Exponential Decay of Radioactive Elements")
+    plt.legend(loc="upper right")
+    plt.show()
