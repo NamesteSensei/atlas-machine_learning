@@ -3,25 +3,26 @@
 Module to plot a line graph of y = x^3.
 """
 
-import matplotlib  # Import matplotlib for setting the backend
+import matplotlib  # Import matplotlib for backend configuration
 import numpy as np  # Import numpy for numerical calculations
 import matplotlib.pyplot as plt  # Import pyplot for plotting
 
-# Set the backend for matplotlib before any other matplotlib code
-matplotlib.use('TkAgg')
+# Set the matplotlib backend (must come after importing matplotlib)
+matplotlib.use('Agg')  # Use Agg backend for headless environments
 
 
 def line():
     """
     Plots a line graph of y = x^3.
     """
-    y = np.arange(0, 11) ** 3  # Create y values (0^3 to 10^3)
+    y = np.arange(0, 11) ** 3  # Generate y values (0^3 to 10^3)
+    plt.figure(figsize=(6.4, 4.8))  # Set the figure size
     plt.plot(y, 'r-')  # Plot with a solid red line ('r-' = red solid)
     plt.xlim(0, 10)  # Set the x-axis range from 0 to 10
     plt.xlabel("x")  # Label for the x-axis
     plt.ylabel("y")  # Label for the y-axis
-    plt.title("Line Graph: y = x^3")  # Title of the graph
-    plt.show()  # Display the plot
+    plt.title("Line Graph: y = x^3")  # Add a title to the graph
+    plt.savefig("0-line-output.png")  # Save the plot as an image
 
 
 if __name__ == "__main__":
