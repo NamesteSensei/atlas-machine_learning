@@ -32,4 +32,6 @@ def change_scale():
     plt.xlabel("Time (years)")  # Label the x-axis
     plt.ylabel("Fraction Remaining")  # Label the y-axis
     plt.title("Exponential Decay of C-14")  # Add a title
+    plt.grid(True)  # Add gridlines for better readability
     plt.show()  # Display the plot
+
