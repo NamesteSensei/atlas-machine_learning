@@ -1,4 +1,4 @@
-#!/home/christopher/atlas-machine_learning/math/plotting/venv/bin/python3
+#!/home/christopher/atlas-machine_learning/math/plotting/venv/bin/python3.9
 # -*- coding: utf-8 -*-
 import re
 import sys
