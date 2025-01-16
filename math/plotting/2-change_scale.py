@@ -1,24 +1,35 @@
 #!/usr/bin/env python3
-import matplotlib
-matplotlib.use('TkAgg')  # Use TkAgg backend for GUI plots
-import numpy as np  # Import numpy for numerical calculations
-import matplotlib.pyplot as plt  # Import pyplot for plotting
+"""
+This module plots an exponential decay graph of C-14.
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 def change_scale():
     """
-    Plots an exponential decay curve with a logarithmic y-axis.
+    Plots a line graph showing the exponential decay of C-14.
+
+    The graph includes:
+    - X-axis labeled 'Time (years)'.
+    - Y-axis labeled 'Fraction Remaining'.
+    - Title: 'Exponential Decay of C-14'.
+    - Y-axis is logarithmically scaled.
+    - X-axis ranges from 0 to 28,650.
     """
-    x = np.arange(0, 28651, 5730)  # Time values (0 to 28650 in steps of 5730)
-    r = np.log(0.5)  # Decay constant for half-life
+    # Generate data
+    x = np.arange(0, 28651, 5730)  # Time points (in years)
+    r = np.log(0.5)  # Natural log of 0.5 (decay constant)
     t = 5730  # Half-life of C-14
-    y = np.exp((r / t) * x)  # Exponential decay formula
+    y = np.exp((r / t) * x)  # Calculate fraction remaining
 
-    plt.plot(x, y, 'b-')  # Plot with a solid blue line ('b-' = blue solid)
-    plt.xlim(0, 28650)  # Set x-axis range
-    plt.yscale('log')  # Use a logarithmic scale for the y-axis
-    plt.xlabel("Time (years)")  # Label for the x-axis
-    plt.ylabel("Fraction Remaining")  # Label for the y-axis
-    plt.title("Exponential Decay of C-14")  # Title of the graph
+    # Create line graph
+    plt.figure(figsize=(6.4, 4.8))  # Set figure size
+    plt.plot(x, y, 'r-')  # Plot with a solid red line
+    plt.xscale('linear')  # X-axis is linear (default)
+    plt.yscale('log')  # Y-axis is logarithmic
+    plt.xlabel("Time (years)")  # Label for x-axis
+    plt.ylabel("Fraction Remaining")  # Label for y-axis
+    plt.title("Exponential Decay of C-14")  # Add a title
     plt.show()  # Display the plot
-
-change_scale()  # Call the function to create the plot
