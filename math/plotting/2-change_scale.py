@@ -27,8 +27,8 @@ def change_scale():
     # Create line graph
     plt.figure(figsize=(6.4, 4.8))  # Set figure size
     plt.plot(x, y, 'r-')  # Plot with a solid red line
-    plt.xscale('linear')  # X-axis is linear (default)
-    plt.yscale('log')  # Y-axis is logarithmic
+    plt.xlim(0, 28650)  # Set x-axis range to exactly [0, 28,650]
+    plt.yscale('log')  # Set y-axis to logarithmic scale
     plt.xlabel("Time (years)")  # Label for x-axis
     plt.ylabel("Fraction Remaining")  # Label for y-axis
     plt.title("Exponential Decay of C-14")  # Add a title
