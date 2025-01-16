@@ -24,12 +24,12 @@ def change_scale():
     t = 5730  # Half-life of C-14
     y = np.exp((r / t) * x)  # Calculate fraction remaining
 
-    # Create line graph
+    # Create the plot
     plt.figure(figsize=(6.4, 4.8))  # Set figure size
-    plt.plot(x, y, 'r-')  # Plot with a solid red line
-    plt.xlim(0, 28650)  # Set x-axis range to exactly [0, 28,650]
-    plt.yscale('log')  # Set y-axis to logarithmic scale
-    plt.xlabel("Time (years)")  # Label for x-axis
-    plt.ylabel("Fraction Remaining")  # Label for y-axis
+    plt.plot(x, y, color='red')  # Solid red line
+    plt.xlim(0, 28650)  # Ensure the x-axis range is exactly [0, 28650]
+    plt.yscale('log')  # Logarithmic scale for y-axis
+    plt.xlabel("Time (years)")  # Label the x-axis
+    plt.ylabel("Fraction Remaining")  # Label the y-axis
     plt.title("Exponential Decay of C-14")  # Add a title
     plt.show()  # Display the plot
