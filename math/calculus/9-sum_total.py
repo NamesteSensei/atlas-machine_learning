@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
 Task 9: Our life is the sum total of all the decisions we make every day.
-This script calculates the sum of squares up to a given number `n` without using loops.
+
+This script calculates the sum of squares up to a given number `n` without
+using loops.
 """
 
 
@@ -17,4 +19,5 @@ def summation_i_squared(n):
     """
     if not isinstance(n, int) or n <= 0:
         return None
+    # Using the formula for the sum of squares: n(n+1)(2n+1)/6
     return n * (n + 1) * (2 * n + 1) // 6
