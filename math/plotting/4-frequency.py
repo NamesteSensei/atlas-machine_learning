@@ -18,18 +18,18 @@ def frequency():
     - Title: 'Project A'.
     - Bars are outlined in black.
     """
-    np.random.seed(5)  # Seed for reproducibility
+    np.random.seed(5)  # Set random seed for reproducibility
     student_grades = np.random.normal(68, 15, 50)  # Generate student grades
 
-    # Create histogram
-    plt.figure(figsize=(6.4, 4.8))  # Set figure size
+    # Create the histogram
+    plt.figure(figsize=(6.4, 4.8))  # Set the figure size
     plt.hist(
         student_grades,
-        bins=range(0, 101, 10),  # Bins every 10 units
+        bins=range(0, 101, 10),  # Bin every 10 units
         edgecolor='black'  # Outline bars in black
     )
-    plt.xlabel("Grades")  # Label x-axis
-    plt.ylabel("Number of Students")  # Label y-axis
-    plt.title("Project A")  # Add title
-    plt.xticks(range(0, 101, 10))  # Set x-axis ticks every 10
-    plt.show()
+    plt.xlabel("Grades")  # Label for the x-axis
+    plt.ylabel("Number of Students")  # Label for the y-axis
+    plt.title("Project A")  # Title of the plot
+    plt.xticks(range(0, 101, 10))  # Set x-axis ticks every 10 units
+    plt.show()  # Display the plot
