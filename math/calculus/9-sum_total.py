@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Task 9: Our life is the sum total of all the decisions we make every day.
+Task 9: Calculate the sum of squares up to a given number `n` without loops.
 
-This script calculates the sum of squares up to a given number `n` without
-using loops.
+This script uses a mathematical formula to compute the sum of squares from
+1 to `n`.
 """
 
 
