@@ -24,29 +24,23 @@ def bars():
     np.random.seed(5)
     fruit = np.random.randint(0, 20, (4, 3))
 
+    # Names and colors
     names = ["Farrah", "Fred", "Felicia"]
     colors = ["red", "yellow", "#ff8000", "#ffe5b4"]
 
-    plt.figure(figsize=(6.4, 4.8))
+    # Plot stacked bars
+    plt.bar(names, fruit[0], width=0.5, color=colors[0], label="Apples")
+    plt.bar(names, fruit[1], width=0.5, bottom=fruit[0], color=colors[1],
+            label="Bananas")
+    plt.bar(names, fruit[2], width=0.5, bottom=fruit[0] + fruit[1],
+            color=colors[2], label="Oranges")
+    plt.bar(names, fruit[3], width=0.5, bottom=fruit[0] + fruit[1] + fruit[2],
+            color=colors[3], label="Peaches")
 
-    plt.bar(
-        names, fruit[0], width=0.5, color=colors[0], label="Apples"
-    )
-    plt.bar(
-        names, fruit[1], width=0.5, bottom=fruit[0], color=colors[1],
-        label="Bananas"
-    )
-    plt.bar(
-        names, fruit[2], width=0.5, bottom=fruit[0] + fruit[1],
-        color=colors[2], label="Oranges"
-    )
-    plt.bar(
-        names, fruit[3], width=0.5, bottom=fruit[0] + fruit[1] + fruit[2],
-        color=colors[3], label="Peaches"
-    )
-
+    # Add labels, title, ticks, and legend
     plt.ylabel("Quantity of Fruit", fontsize='small')
-    plt.title("Number of Fruit per Person", fontsize='small')
     plt.yticks(range(0, 81, 10))
+    plt.title("Number of Fruit per Person", fontsize='small')
     plt.legend(fontsize='small')
+
     plt.show()
