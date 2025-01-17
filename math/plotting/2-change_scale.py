@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
+
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def change_scale():
+    """
+    Plots x ↦ y as a line graph with specified requirements.
+    """
     x = np.arange(0, 28651, 5730)
     r = np.log(0.5)
     t = 5730
@@ -17,6 +22,7 @@ def change_scale():
     plt.yscale('log')
     plt.xlim(0, 28650)
     plt.show()
+
 
 # Example usage
 if __name__ == "__main__":
