@@ -25,6 +25,10 @@ def poly_integral(poly, C=0):
     while len(integral) > 1 and integral[-1] == 0:
         integral.pop()
     
+    # Handle the case where the polynomial is [0]
+    if integral == [C, 0]:
+        integral = [C]
+    
     return [int(x) if isinstance(x, float) and x.is_integer() else x for x in integral]
 
 # Example usage
