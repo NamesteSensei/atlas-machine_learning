@@ -21,6 +21,10 @@ def poly_integral(poly, C=0):
     for i, coef in enumerate(poly):
         integral.append(coef / (i + 1))
     
+    # Remove trailing zeros
+    while len(integral) > 1 and integral[-1] == 0:
+        integral.pop()
+    
     return [int(x) if isinstance(x, float) and x.is_integer() else x for x in integral]
 
 # Example usage
