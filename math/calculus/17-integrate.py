@@ -21,7 +21,7 @@ def poly_integral(poly, C=0):
     for i, coef in enumerate(poly):
         integral.append(coef / (i + 1))
     
-    return [int(x) if x.is_integer() else x for x in integral]
+    return [int(x) if isinstance(x, float) and x.is_integer() else x for x in integral]
 
 # Example usage
 if __name__ == "__main__":
