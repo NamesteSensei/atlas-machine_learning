@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+This module defines the Exponential class to represent an exponential,
 """
 
 
