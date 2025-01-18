@@ -29,23 +29,14 @@ class Poisson:
     def pmf(self, k):
         """
         Calculate the PMF for a given number of successes (k).
+        k: number of successes
+        Returns: PMF value for k
         """
         k = int(k)
         if k < 0:
             return 0
-        return (self.lambtha ** k * self.exp_neg_lambda()) / self.factorial(k)
 
-    def cdf(self, k):
-        """
-        Calculate the CDF for a given number of successes (k).
-        """
-        k = int(k)
-        if k < 0:
-            return 0
-        cumulative = 0
-        for i in range(k + 1):
-            cumulative += self.pmf(i)
-        return cumulative
+        return (self.lambtha ** k * self.exp_neg_lambda()) / self.factorial(k)
 
     def exp_neg_lambda(self):
         """
