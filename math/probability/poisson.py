@@ -12,13 +12,8 @@ class Poisson:
     def __init__(self, data=None, lambtha=1.):
         """
         Initialize a Poisson distribution.
-
-        Args:
-            data (list): Optional, data points to estimate the distribution.
-            lambtha (float): Expected number of occurrences in a given time frame.
-        Raises:
-            ValueError: If lambtha is not positive or if data is invalid.
-            TypeError: If data is not a list.
+        data: list of data points (optional)
+        lambtha: expected number of occurrences in a given time frame
         """
         if data is None:
             if lambtha <= 0:
@@ -34,38 +29,38 @@ class Poisson:
     def pmf(self, k):
         """
         Calculate the PMF for a given number of successes (k).
-
-        Args:
-            k (int): Number of successes.
-        Returns:
-            float: The PMF value for k.
         """
+        k = int(k)
         if k < 0:
             return 0
-        k = int(k)
-        e = 2.7182818285  # Approximation of e
-        fact_k = 1
-        for i in range(1, k + 1):
-            fact_k *= i
-        return (self.lambtha ** k * e ** -self.lambtha) / fact_k
+        return (self.lambtha ** k * self.exp_neg_lambda()) / self.factorial(k)
 
     def cdf(self, k):
         """
         Calculate the CDF for a given number of successes (k).
-
-        Args:
-            k (int): Number of successes.
-        Returns:
-            float: The CDF value for k.
         """
+        k = int(k)
         if k < 0:
             return 0
-        k = int(k)
-        e = 2.7182818285  # Approximation of e
         cumulative = 0
         for i in range(k + 1):
-            fact_i = 1
-            for j in range(1, i + 1):
-                fact_i *= j
-            cumulative += (self.lambtha ** i * e ** -self.lambtha) / fact_i
+            cumulative += self.pmf(i)
         return cumulative
+
+    def exp_neg_lambda(self):
+        """
+        Calculate e^(-lambda).
+        """
+        e = 2.7182818285
+        return e ** -self.lambtha
+
+    def factorial(self, num):
+        """
+        Calculate the factorial of a number.
+        """
+        if num == 0:
+            return 1
+        result = 1
+        for i in range(1, num + 1):
+            result *= i
+        return result
