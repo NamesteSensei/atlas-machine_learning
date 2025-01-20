@@ -6,7 +6,7 @@ Normal = __import__('normal').Normal
 np.random.seed(0)
 data = np.random.normal(70, 10, 100).tolist()
 n1 = Normal(data)
-print('PHI(90):', n1.cdf(90))  # Should compute using mean and stddev from data
+print(np.around(n1.cdf(90), 10))  # Should produce the correct desired output
 
 n2 = Normal(mean=70, stddev=10)
-print('PHI(90):', n2.cdf(90))  # Should compute using mean=70 and stddev=10
+print(np.around(n2.cdf(90), 10))  # Should match the desired output
