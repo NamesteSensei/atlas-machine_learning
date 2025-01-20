@@ -49,48 +49,37 @@ class Normal:
 
     def pdf(self, x):
         """
-        Calculate the PDF value for a given data point.
+        Calculate the PDF value for a given x-value.
 
         The formula is:
         f(x; mean, stddev) = (1 / sqrt(2 * pi * stddev^2)) *
                              e^(-(x - mean)^2 / (2 * stddev^2))
 
         Args:
-            x (float): The data point.
+            x (float): The x-value.
 
         Returns:
-            float: The PDF value for the given x.
+            float: The PDF value for x.
         """
         coeff = 1 / (self.stddev * (2 * 3.14159265359) ** 0.5)
         exponent = -((x - self.mean) ** 2) / (2 * self.stddev ** 2)
         return coeff * (2.7182818285 ** exponent)
 
-    def z_score(self, x):
+    def cdf(self, x):
         """
-        Calculate the z-score of a given data point.
+        Calculate the CDF value for a given x-value.
 
         The formula is:
-        z = (x - mean) / stddev
+        CDF(x) = 0.5 * [1 + erf((x - mean) / (stddev * sqrt(2)))]
 
         Args:
-            x (float): The data point.
+            x (float): The x-value.
 
         Returns:
-            float: The z-score of x.
+            float: The CDF value for x.
         """
-        return (x - self.mean) / self.stddev
-
-    def x_value(self, z):
-        """
-        Calculate the data point (x-value) corresponding to a given z-score.
-
-        The formula is:
-        x = mean + z * stddev
-
-        Args:
-            z (float): The z-score.
-
-        Returns:
-            float: The corresponding x-value.
-        """
-        return self.mean + z * self.stddev
+        z = (x - self.mean) / (self.stddev * (2 ** 0.5))
+        erf = (2 / (3.14159265359 ** 0.5)) * (
+            z - (z ** 3) / 3 + (z ** 5) / 10 - (z ** 7) / 42
+        )
+        return 0.5 * (1 + erf)
