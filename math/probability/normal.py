@@ -46,3 +46,21 @@ class Normal:
             self.mean = float(sum(data) / len(data))
             variance = sum((x - self.mean) ** 2 for x in data) / len(data)
             self.stddev = float(variance ** 0.5)
+
+    def pdf(self, x):
+        """
+        Calculate the PDF value for a given data point.
+
+        The formula is:
+        f(x; mean, stddev) = (1 / sqrt(2 * pi * stddev^2)) *
+                             e^(-(x - mean)^2 / (2 * stddev^2))
+
+        Args:
+            x (float): The data point.
+
+        Returns:
+            float: The PDF value for the given x.
+        """
+        coeff = 1 / (self.stddev * (2 * 3.14159265359) ** 0.5)
+        exponent = -((x - self.mean) ** 2) / (2 * self.stddev ** 2)
+        return coeff * (2.7182818285 ** exponent)
