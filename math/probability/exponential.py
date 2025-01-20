@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
-This module defines the Exponential class to represent an distribution.
-
-The exponential distribution models the time between events in a process
-where events occur continuously and independently at a constant average rate.
+Thsi module defines the Exponetial class to represent an exponetial.
 """
 
 
@@ -61,3 +58,21 @@ class Exponential:
         if x < 0:
             return 0
         return self.lambtha * (2.7182818285 ** (-self.lambtha * x))
+
+    def cdf(self, x):
+        """
+        Calculate the CDF value for a given time period.
+
+        The formula is:
+        F(x; lambda) = 1 - e^(-lambda * x) for x >= 0
+        F(x; lambda) = 0 for x < 0
+
+        Args:
+            x (float): The time period.
+
+        Returns:
+            float: The cumulative distribution function value for x.
+        """
+        if x < 0:
+            return 0
+        return 1 - (2.7182818285 ** (-self.lambtha * x))
