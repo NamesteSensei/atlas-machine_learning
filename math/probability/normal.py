@@ -1,53 +1,48 @@
+#!/usr/bin/env python3
+"""
+This module defines the Normal class to represent a normal distribution.
 
-rmal Distribution module.
+The normal distribution is a bell-shaped distribution characterized by
+its mean and standard deviation.
 """
 
 
 class Normal:
+    """
+    Represents a normal distribution.
+
+    Attributes:
+        mean (float): The mean of the distribution.
+        stddev (float): The standard deviation of the distribution.
+    """
+
+    def __init__(self, data=None, mean=0., stddev=1.):
         """
-            Represents a Normal distribution.
-                """
+        Initialize the Normal distribution.
 
-                    def __init__(self, data=None, mean=0., stddev=1.):
-                            """
-                                    Initialize a Normal distribution.
-                                            """
-                                                    if data is None:
-                                                                if stddev <= 0:
-                                                                                raise ValueError("stddev must be a positive value")
-                                                                                            self.mean = float(mean)
-                                                                                                        self.stddev = float(stddev)
-                                                                                                                else:
-                                                                                                                            if not isinstance(data, list):
-                                                                                                                                            raise TypeError("data must be a list")
-                                                                                                                                                        if len(data) < 2:
-                                                                                                                                                                        raise ValueError("data must contain multiple values")
-                                                                                                                                                                                    self.mean = sum(data) / len(data)
-                                                                                                                                                                                                self.stddev = (sum((x - self.mean)**2 for x in data) / len(data))**0.5
+        If `data` is provided, the mean and standard deviation are calculated
+        from the data. Otherwise, the provided `mean` and `stddev` are used.
 
-                                                                                                                                                                                                    def z_score(self, x):
-                                                                                                                                                                                                            """
-                                                                                                                                                                                                                    Calculate the z-score for a given x-value.
-                                                                                                                                                                                                                            """
-                                                                                                                                                                                                                                    return (x - self.mean) / self.stddev
+        Args:
+            data (list): A list of data to estimate the distribution.
+            mean (float): The mean of the distribution.
+            stddev (float): The standard deviation of the distribution.
 
-                                                                                                                                                                                                                                        def x_value(self, z):
-                                                                                                                                                                                                                                                """
-                                                                                                                                                                                                                                                        Calculate the x-value for a given z-score.
-                                                                                                                                                                                                                                                                """
-                                                                                                                                                                                                                                                                        return z * self.stddev + self.mean
-
-                                                                                                                                                                                                                                                                            def pdf(self, x):
-                                                                                                                                                                                                                                                                                    """
-                                                                                                                                                                                                                                                                                            Calculate the PDF for a given x-value.
-                                                                                                                                                                                                                                                                                                    """
-                                                                                                                                                                                                                                                                                                            from math import exp, pi, sqrt
-                                                                                                                                                                                                                                                                                                                    return (1 / (self.stddev * sqrt(2 * pi))) * exp(-0.5 * ((x - self.mean) / self.stddev)**2)
-
-                                                                                                                                                                                                                                                                                                                        def cdf(self, x):
-                                                                                                                                                                                                                                                                                                                                """
-                                                                                                                                                                                                                                                                                                                                        Calculate the CDF for a given x-value.
-                                                                                                                                                                                                                                                                                                                                                """
-                                                                                                                                                                                                                                                                                                                                                        from math import erf, sqrt
-                                                                                                                                                                                                                                                                                                                                                                return 0.5 * (1 + erf((x - self.mean) / (self.stddev * sqrt(2))))
-
+        Raises:
+            TypeError: If `data` is not a list.
+            ValueError: If `data` contains fewer than two values.
+            ValueError: If `stddev` is not positive.
+        """
+        if data is None:
+            if stddev <= 0:
+                raise ValueError("stddev must be a positive value")
+            self.mean = float(mean)
+            self.stddev = float(stddev)
+        else:
+            if not isinstance(data, list):
+                raise TypeError("data must be a list")
+            if len(data) < 2:
+                raise ValueError("data must contain multiple values")
+            self.mean = float(sum(data) / len(data))
+            variance = sum((x - self.mean) ** 2 for x in data) / len(data)
+            self.stddev = float(variance ** 0.5)
