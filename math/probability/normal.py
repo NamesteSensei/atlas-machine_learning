@@ -62,7 +62,7 @@ class Normal:
         Returns:
             float: The PDF value for x.
         """
-        coeff = 1 / (self.stddev * (2 * 3.14159265359) ** 0.5)
+        coeff = 1 / (self.stddev * (2 * 3.1415926536) ** 0.5)
         exponent = -((x - self.mean) ** 2) / (2 * self.stddev ** 2)
         return coeff * (2.7182818285 ** exponent)
 
@@ -80,11 +80,12 @@ class Normal:
             float: The CDF value for x.
         """
         z = (x - self.mean) / (self.stddev * (2 ** 0.5))
-        # Refined Abramowitz and Stegun approximation for erf(z)
         t = 1 / (1 + 0.3275911 * abs(z))
+        a1, a2, a3 = 0.254829592, -0.284496736, 1.421413741
+        a4, a5 = -1.453152027, 1.061405429
         erf = 1 - (
-            (a1 * t + a2 * t**2 + a3 * t**3 + a4 * t**4 + a5 * t**5)
-            * (2.7182818285 ** (-z**2))
+            (a1 * t + a2 * t**2 + a3 * t**3 + a4 * t**4 + a5 * t**5) *
+            (2.7182818285 ** (-z**2))
         )
         if z < 0:
             erf = -erf
