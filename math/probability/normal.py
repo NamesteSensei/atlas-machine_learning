@@ -79,10 +79,10 @@ class Normal:
             float: The CDF value for x.
         """
         z = (x - self.mean) / (self.stddev * (2 ** 0.5))
-        # Abramowitz and Stegun approximation for erf(z)
+        # Refined Abramowitz and Stegun approximation for erf(z)
         t = 1 / (1 + 0.3275911 * abs(z))
         a1, a2, a3, a4, a5 = 0.254829592, -0.284496736, 1.421413741, -1.453152027, 1.061405429
-        erf = 1 - (a1 * t + a2 * t**2 + a3 * t**3 + a4 * t**4 + a5 * t**5) * (2.7182818285 ** (-z**2))
+        erf = 1 - (a1 * t + a2 * t**2 + a3 * t**3 + a4 * t**4 + a5 * t**5) * (2.718281828459045 ** (-z**2))
         if z < 0:
             erf = -erf
         return 0.5 * (1 + erf)
