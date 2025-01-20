@@ -64,3 +64,33 @@ class Normal:
         coeff = 1 / (self.stddev * (2 * 3.14159265359) ** 0.5)
         exponent = -((x - self.mean) ** 2) / (2 * self.stddev ** 2)
         return coeff * (2.7182818285 ** exponent)
+
+    def z_score(self, x):
+        """
+        Calculate the z-score of a given data point.
+
+        The formula is:
+        z = (x - mean) / stddev
+
+        Args:
+            x (float): The data point.
+
+        Returns:
+            float: The z-score of x.
+        """
+        return (x - self.mean) / self.stddev
+
+    def x_value(self, z):
+        """
+        Calculate the data point (x-value) corresponding to a given z-score.
+
+        The formula is:
+        x = mean + z * stddev
+
+        Args:
+            z (float): The z-score.
+
+        Returns:
+            float: The corresponding x-value.
+        """
+        return self.mean + z * self.stddev
