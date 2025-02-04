@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Neuron class performing binary classification with multiple epochs.
+Neuron class performing binary classification with training functionality.
 """
 
 import numpy as np
@@ -8,7 +8,7 @@ import numpy as np
 
 class Neuron:
     """
-    Class that represents a single neuron performing binary classification.
+    Represents a single neuron for binary classification.
     """
 
     def __init__(self, nx):
@@ -54,7 +54,7 @@ class Neuron:
         X (numpy.ndarray): Shape (nx, m), Input data.
 
         Returns:
-        numpy.ndarray: Shape (1, m), Activated output.
+        numpy.ndarray: Activated output.
         """
         Z = np.matmul(self.__W, X) + self.__b
         self.__A = 1 / (1 + np.exp(-Z))  # Sigmoid activation function
@@ -62,7 +62,7 @@ class Neuron:
 
     def cost(self, Y, A):
         """
-        Compute the cost using logistic regression loss.
+        Compute logistic regression cost function.
 
         Parameters:
         Y (numpy.ndarray): Shape (1, m), Correct labels.
@@ -84,10 +84,10 @@ class Neuron:
         Y (numpy.ndarray): Shape (1, m), Correct labels.
 
         Returns:
-        tuple: (Predictions, cost)
+        tuple: (Predictions, cost).
         """
         A = self.forward_prop(X)
-        predictions = np.where(A >= 0.5, 1, 0)  # Thresholding at 0.5
+        predictions = np.where(A >= 0.5, 1, 0)  # Threshold at 0.5
         cost = self.cost(Y, A)
         return predictions, cost
 
@@ -104,4 +104,47 @@ class Neuron:
         Returns:
         None
         """
-        m = X
+        m = X.shape[1]  # Number of examples
+        dZ = A - Y  # Error term
+        dW = (1 / m) * np.matmul(dZ, X.T)  # Gradient for weights
+        db = (1 / m) * np.sum(dZ)  # Gradient for bias
+
+        # Update weights and bias
+        self.__W -= alpha * dW
+        self.__b -= alpha * db
+
+    def train(self, X, Y, iterations=5000, alpha=0.05):
+        """
+        Train the neuron using gradient descent.
+
+        Parameters:
+        X (numpy.ndarray): Shape (nx, m), Input data.
+        Y (numpy.ndarray): Shape (1, m), Correct labels.
+        iterations (int): Number of training iterations.
+        alpha (float): Learning rate.
+
+        Returns:
+        tuple: (Final predictions, cost history list).
+        """
+        if not isinstance(iterations, int):
+            raise TypeError("iterations must be an integer")
+        if iterations <= 0:
+            raise ValueError("iterations must be a positive integer")
+        if not isinstance(alpha, (float, int)):
+            raise TypeError("alpha must be a float")
+        if alpha <= 0:
+            raise ValueError("alpha must be positive")
+
+        alpha = float(alpha)  # Ensure alpha is a float
+        cost_history = []  # List to store cost values
+
+        for i in range(iterations):
+            A = self.forward_prop(X)
+            self.gradient_descent(X, Y, A, alpha)
+
+            if i % 100 == 0 or i == iterations - 1:
+                cost = self.cost(Y, A)
+                cost_history.append(float(cost))  # Store as float
+                print(f"Iteration {i}/{iterations} - Cost: {cost:.6f}")
+
+        return self.evaluate(X, Y)[0], cost_history
