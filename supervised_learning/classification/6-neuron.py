@@ -85,10 +85,9 @@ class Neuron:
             Y (numpy.ndarray): Shape (1, m) containing the correct labels.
 
         Returns:
-            tuple: (predictions, cost) where predictions is a numpy.ndarray of
-                   0's and 1's and cost is the cost of the network.
+            tuple: (predictions, cost) where predictions is a numpy.ndarray of 0's and 1's.
         """
-        # Perform forward propagation to obtain activated output.
+        # Perform forward propagation to obtain the activated output.
         A = self.forward_prop(X)
         # Calculate the cost.
         cost = self.cost(Y, A)
@@ -103,7 +102,7 @@ class Neuron:
         Parameters:
             X (numpy.ndarray): Shape (nx, m) containing the input data.
             Y (numpy.ndarray): Shape (1, m) containing the correct labels.
-            A (numpy.ndarray): Shape (1, m) containing the activated outputs.
+            A (numpy.ndarray): Shape (1, m) containing the activated output.
             alpha (float): The learning rate.
 
         Updates:
@@ -146,7 +145,7 @@ class Neuron:
         if alpha <= 0:
             raise ValueError("alpha must be positive")
 
-        # Perform gradient descent for the specified number of iterations.
+        # Perform gradient descent for the specified number of iterations (only one loop allowed).
         for _ in range(iterations):
             A = self.forward_prop(X)
             self.gradient_descent(X, Y, A, alpha)
