@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Neuron class performing binary classification with multiple epochs
+Neuron class performing binary classification with multiple epochs.
 """
 
 import numpy as np
@@ -129,13 +129,15 @@ class Neuron:
         if not isinstance(alpha, float) or alpha <= 0:
             raise ValueError("alpha must be a positive float")
 
-        cost_history = []  # List to store costs per 100 iterations
+        cost_history = []  # Ensure this is a list
 
         for i in range(iterations):
             A = self.forward_prop(X)
             self.gradient_descent(X, Y, A, alpha)
             
-            # Store cost every 100 iterations and at the final iteration
-            cost = self.cost(Y, A)
+            cost = self.cost(Y, A)  # Always compute cost
             if i % 100 == 0 or i == iterations - 1:
-                cost
+                cost_history.append(float(cost))  # Append cost as a float
+                print(f"Iteration {i}/{iterations} - Cost: {cost:.6f}")
+
+        return self.evaluate(X, Y)[0], cost_history  # Return list of costs
