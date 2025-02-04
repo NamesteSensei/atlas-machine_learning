@@ -5,13 +5,13 @@ import numpy as np
 
 Neuron = __import__('7-neuron').Neuron
 
-# Load training data
-lib_train = np.load('../data/Binary_Train.npz')
+# Load training data (update the filename)
+lib_train = np.load('../data/train.npz')  # Changed from Binary_Train.npz
 X_train_3D, Y_train = lib_train['X'], lib_train['Y']
 X_train = X_train_3D.reshape((X_train_3D.shape[0], -1)).T
 
-# Load development data
-lib_dev = np.load('../data/Binary_Dev.npz')
+# Load development data (update the filename)
+lib_dev = np.load('../data/dev.npz')  # Changed from Binary_Dev.npz
 X_dev_3D, Y_dev = lib_dev['X'], lib_dev['Y']
 X_dev = X_dev_3D.reshape((X_dev_3D.shape[0], -1)).T
 
