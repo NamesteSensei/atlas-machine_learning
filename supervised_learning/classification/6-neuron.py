@@ -138,6 +138,7 @@ class Neuron:
         alpha = float(alpha)  # Ensure alpha is a float
         cost_history = []  # List to store cost values
 
+        # **Single Loop Implementation**
         for i in range(iterations):
             A = self.forward_prop(X)
             self.gradient_descent(X, Y, A, alpha)
