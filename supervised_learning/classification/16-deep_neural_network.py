@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""Defines a deep neural network for binary classification."""
+
 import numpy as np
 
 
@@ -8,9 +10,8 @@ class DeepNeuralNetwork:
 
     Private instance attributes:
         __L (int): The number of layers in the network.
-        __cache (dict): A dictionary to hold all intermediary values.
-        __weights (dict): A dictionary to hold all weights and biases.
-            Weights are initialized using He et al. initialization.
+        __cache (dict): Stores all intermediary values of the network.
+        __weights (dict): Holds weights and biases, initialized using He et al.
     """
 
     def __init__(self, nx, layers):
@@ -19,8 +20,8 @@ class DeepNeuralNetwork:
 
         Args:
             nx (int): Number of input features.
-            layers (list): List of positive integers representing the number
-                of nodes in each layer.
+            layers (list): List of positive integers representing the
+                          number of nodes in each layer.
 
         Raises:
             TypeError: If nx is not an integer.
@@ -35,24 +36,28 @@ class DeepNeuralNetwork:
             raise TypeError("layers must be a list of positive integers")
         if not all(isinstance(n, int) and n > 0 for n in layers):
             raise TypeError("layers must be a list of positive integers")
+
         self.__L = len(layers)
         self.__cache = {}
         self.__weights = {}
-        for i in range(self.__L):
-            layer_key_w = f"W{i + 1}"
-            layer_key_b = f"b{i + 1}"
-            if i == 0:
-                self.__weights[layer_key_w] = (
-                    np.random.randn(layers[i], nx) *
+
+        for layer_index in range(self.__L):
+            weight_key = f"W{layer_index + 1}"
+            bias_key = f"b{layer_index + 1}"
+
+            if layer_index == 0:
+                self.__weights[weight_key] = (
+                    np.random.randn(layers[layer_index], nx) *
                     np.sqrt(2 / nx)
                 )
             else:
-                prev_layer = layers[i - 1]
-                self.__weights[layer_key_w] = (
-                    np.random.randn(layers[i], prev_layer) *
-                    np.sqrt(2 / prev_layer)
+                prev_nodes = layers[layer_index - 1]
+                self.__weights[weight_key] = (
+                    np.random.randn(layers[layer_index], prev_nodes) *
+                    np.sqrt(2 / prev_nodes)
                 )
-            self.__weights[layer_key_b] = np.zeros((layers[i], 1))
+
+            self.__weights[bias_key] = np.zeros((layers[layer_index], 1))
 
     @property
     def L(self):
