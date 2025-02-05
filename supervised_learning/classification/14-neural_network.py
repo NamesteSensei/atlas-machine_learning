@@ -1,32 +1,27 @@
 #!/usr/bin/env python3
-
 """
-Module: 14-neural_network
-This module implements a neural network with one hidden layer
-for binary classification, including forward propagation, cost calculation,
-evaluation of predictions, gradient descent optimization, and training.
-
-Classes:
-    NeuralNetwork: Defines a neural network with one hidden layer.
+Neural Network with One Hidden Layer for Binary Classification.
+Implements forward propagation, cost calculation, evaluation,
+gradient descent, and training.
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 class NeuralNetwork:
-    """Neural network with one hidden layer for binary classification."""
+    """Neural Network performing binary classification with one hidden layer."""
 
     def __init__(self, nx, nodes):
-        """Initialize the neural network.
+        """
+        Initialize the Neural Network.
 
         Args:
             nx (int): Number of input features.
             nodes (int): Number of nodes in the hidden layer.
 
         Raises:
-            TypeError: If nx or nodes is not an integer.
-            ValueError: If nx or nodes is less than 1.
+            TypeError: If nx or nodes are not integers.
+            ValueError: If nx or nodes are less than 1.
         """
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
@@ -37,12 +32,11 @@ class NeuralNetwork:
         if nodes < 1:
             raise ValueError("nodes must be a positive integer")
 
-        # Initialize private attributes
         self.__W1 = np.random.randn(nodes, nx)
         self.__b1 = np.zeros((nodes, 1))
         self.__A1 = 0
         self.__W2 = np.random.randn(1, nodes)
-        self.__b2 = np.zeros((1, 1))
+        self.__b2 = 0
         self.__A2 = 0
 
     @property
@@ -70,90 +64,68 @@ class NeuralNetwork:
         return self.__A2
 
     def forward_prop(self, X):
-        """Performs forward propagation using the sigmoid activation function.
-
-        Args:
-            X (numpy.ndarray): Input data with shape (nx, m).
-
-        Returns:
-            tuple: Activated outputs (A1, A2) of the hidden and output layers.
-        """
+        """Perform forward propagation."""
         Z1 = np.matmul(self.__W1, X) + self.__b1
-        self.__A1 = 1 / (1 + np.exp(-Z1))
-
+        self.__A1 = 1 / (1 + np.exp(-Z1))  # Sigmoid activation
         Z2 = np.matmul(self.__W2, self.__A1) + self.__b2
-        self.__A2 = 1 / (1 + np.exp(-Z2))
-
+        self.__A2 = 1 / (1 + np.exp(-Z2))  # Sigmoid activation
         return self.__A1, self.__A2
 
     def cost(self, Y, A):
-        """Calculates the cost using logistic regression loss function.
-
-        Args:
-            Y (numpy.ndarray): Correct labels with shape (1, m).
-            A (numpy.ndarray): Activated output of the neuron.
-
-        Returns:
-            float: Computed cost.
-        """
+        """Calculate cost using logistic regression loss function."""
         m = Y.shape[1]
-        cost = -np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)) / m
+        cost = (-np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))) / m
         return cost
 
     def evaluate(self, X, Y):
-        """Evaluates the neural network’s predictions.
-
-        Args:
-            X (numpy.ndarray): Input data with shape (nx, m).
-            Y (numpy.ndarray): Correct labels with shape (1, m).
-
-        Returns:
-            tuple: (predictions, cost) where predictions are classified labels.
-        """
+        """Evaluate predictions and compute cost."""
         A1, A2 = self.forward_prop(X)
         cost = self.cost(Y, A2)
-        predictions = np.where(A2 >= 0.5, 1, 0)
-        return predictions, cost
+        prediction = np.where(A2 >= 0.5, 1, 0)
+        return prediction, cost
 
     def gradient_descent(self, X, Y, A1, A2, alpha=0.05):
-        """Performs one pass of gradient descent to update weights and biases.
-
-        Args:
-            X (numpy.ndarray): Input data with shape (nx, m).
-            Y (numpy.ndarray): Correct labels with shape (1, m).
-            A1 (numpy.ndarray): Activated output of the hidden layer.
-            A2 (numpy.ndarray): Activated output of the output neuron.
-            alpha (float): Learning rate.
-        """
+        """Perform gradient descent to update weights and biases."""
         m = Y.shape[1]
         dZ2 = A2 - Y
         dW2 = np.matmul(dZ2, A1.T) / m
-        db2 = np.sum(dZ2, axis=1, keepdims=True) / m
+        db2 = np.sum(dZ2) / m
 
         dZ1 = np.matmul(self.__W2.T, dZ2) * (A1 * (1 - A1))
         dW1 = np.matmul(dZ1, X.T) / m
-        db1 = np.sum(dZ1, axis=1, keepdims=True) / m
+        db1 = np.sum(dZ1) / m
 
-        self.__W2 -= alpha * dW2
-        self.__b2 -= alpha * db2
         self.__W1 -= alpha * dW1
         self.__b1 -= alpha * db1
+        self.__W2 -= alpha * dW2
+        self.__b2 -= alpha * db2
 
     def train(self, X, Y, iterations=5000, alpha=0.05):
-        """Trains the neural network using gradient descent.
+        """
+        Train the neural network.
 
         Args:
-            X (numpy.ndarray): Input data with shape (nx, m).
-            Y (numpy.ndarray): Correct labels with shape (1, m).
-            iterations (int): Number of training iterations.
+            X (numpy.ndarray): Input data.
+            Y (numpy.ndarray): Correct labels.
+            iterations (int): Number of iterations.
             alpha (float): Learning rate.
 
+        Raises:
+            TypeError: If iterations is not an integer.
+            ValueError: If iterations is not positive.
+            TypeError: If alpha is not a float.
+            ValueError: If alpha is not positive.
+
         Returns:
-            tuple: (predictions, cost) after training.
+            Tuple: Final predictions and cost.
         """
-        if not isinstance(iterations, int) or iterations < 1:
+        if not isinstance(iterations, int):
+            raise TypeError("iterations must be an integer")
+        if iterations < 1:
             raise ValueError("iterations must be a positive integer")
-        if not isinstance(alpha, float) or alpha <= 0:
+        if not isinstance(alpha, float):
+            raise TypeError("alpha must be a float")
+        if alpha <= 0:
             raise ValueError("alpha must be positive")
 
         for _ in range(iterations):
