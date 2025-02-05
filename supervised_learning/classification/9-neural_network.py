@@ -17,11 +17,11 @@ class NeuralNetwork:
 
     def __init__(self, nx, nodes):
         """Initialize the neural network.
-        
+
         Args:
             nx (int): Number of input features.
             nodes (int): Number of nodes in the hidden layer.
-        
+
         Raises:
             TypeError: If nx or nodes is not an integer.
             ValueError: If nx or nodes is less than 1.
