@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Defines a deep neural network for binary classification."""
+"""Module: 16-deep_neural_network
+Defines a deep neural network for binary classification.
+"""
 
 import numpy as np
 
@@ -9,19 +11,20 @@ class DeepNeuralNetwork:
     Defines a deep neural network performing binary classification.
 
     Private instance attributes:
-        __L (int): The number of layers in the network.
+        __L (int): Number of layers in the network.
         __cache (dict): Stores all intermediary values of the network.
-        __weights (dict): Holds weights and biases, initialized using He et al.
+        __weights (dict): Stores all weights and biases of the network.
+            - Weights initialized using He et al. initialization.
     """
 
     def __init__(self, nx, layers):
         """
-        Initialize the deep neural network.
+        Initialize a deep neural network.
 
         Args:
             nx (int): Number of input features.
-            layers (list): List of positive integers representing the
-                          number of nodes in each layer.
+            layers (list): List of positive integers representing the number
+                of nodes in each layer.
 
         Raises:
             TypeError: If nx is not an integer.
@@ -32,32 +35,26 @@ class DeepNeuralNetwork:
             raise TypeError("nx must be an integer")
         if nx < 1:
             raise ValueError("nx must be a positive integer")
-        if not isinstance(layers, list) or len(layers) == 0:
-            raise TypeError("layers must be a list of positive integers")
-        if not all(isinstance(n, int) and n > 0 for n in layers):
+        if (not isinstance(layers, list) or len(layers) == 0 or
+                not all(isinstance(n, int) and n > 0 for n in layers)):
             raise TypeError("layers must be a list of positive integers")
 
+        # Initialize attributes
         self.__L = len(layers)
         self.__cache = {}
         self.__weights = {}
 
-        for layer_index in range(self.__L):
-            weight_key = f"W{layer_index + 1}"
-            bias_key = f"b{layer_index + 1}"
-
-            if layer_index == 0:
-                self.__weights[weight_key] = (
-                    np.random.randn(layers[layer_index], nx) *
-                    np.sqrt(2 / nx)
-                )
-            else:
-                prev_nodes = layers[layer_index - 1]
-                self.__weights[weight_key] = (
-                    np.random.randn(layers[layer_index], prev_nodes) *
-                    np.sqrt(2 / prev_nodes)
-                )
-
-            self.__weights[bias_key] = np.zeros((layers[layer_index], 1))
+        # ✅ Using only ONE loop to initialize weights & biases
+        prev_layer_size = nx  # First layer takes input of size `nx`
+        for layer_index, nodes in enumerate(layers, start=1):
+            # He et al. initialization for weights
+            self.__weights[f"W{layer_index}"] = (
+                np.random.randn(nodes, prev_layer_size) *
+                np.sqrt(2 / prev_layer_size)
+            )
+            # Bias initialized as zeros
+            self.__weights[f"b{layer_index}"] = np.zeros((nodes, 1))
+            prev_layer_size = nodes  # Update prev_layer_size for next iteration
 
     @property
     def L(self):
