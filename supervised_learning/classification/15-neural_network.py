@@ -1,29 +1,15 @@
 #!/usr/bin/env python3
-"""
-NeuralNetwork - Defines a neural network with one hidden layer.
-Trains using gradient descent and evaluates binary classification.
-Includes verbose and graphing options for training visualization.
-"""
+"""Neural Network with one hidden layer for binary classification."""
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 
 class NeuralNetwork:
-    """Neural network with one hidden layer for binary classification."""
+    """Defines a neural network for binary classification."""
 
     def __init__(self, nx, nodes):
-        """
-        Initializes the Neural Network.
-
-        Args:
-            nx (int): Number of input features.
-            nodes (int): Number of nodes in the hidden layer.
-
-        Raises:
-            TypeError: If nx or nodes is not an integer.
-            ValueError: If nx or nodes is less than 1.
-        """
+        """Initialize the neural network."""
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
         if nx < 1:
@@ -75,19 +61,21 @@ class NeuralNetwork:
         return self.__A1, self.__A2
 
     def cost(self, Y, A):
-        """Compute cost using logistic regression."""
+        """Compute the cost function."""
         m = Y.shape[1]
-        return -np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)) / m
+        cost = -np.sum(Y * np.log(A) + (1 - Y) *
+                       np.log(1.0000001 - A)) / m
+        return cost
 
     def evaluate(self, X, Y):
-        """Evaluate the model's predictions."""
+        """Evaluate predictions and cost."""
         A1, A2 = self.forward_prop(X)
         cost = self.cost(Y, A2)
-        predictions = np.where(A2 >= 0.5, 1, 0)
-        return predictions, cost
+        prediction = np.where(A2 >= 0.5, 1, 0)
+        return prediction, cost
 
     def gradient_descent(self, X, Y, A1, A2, alpha=0.05):
-        """Perform one pass of gradient descent."""
+        """Perform gradient descent."""
         m = Y.shape[1]
         dZ2 = A2 - Y
         dW2 = np.matmul(dZ2, A1.T) / m
@@ -102,17 +90,15 @@ class NeuralNetwork:
         self.__W2 -= alpha * dW2
         self.__b2 -= alpha * db2
 
-    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True, step=100):
-        """Train the model using gradient descent."""
+    def train(self, X, Y, iterations=5000, alpha=0.05,
+              verbose=True, graph=True, step=100):
+        """Train the neural network."""
         if not isinstance(iterations, int) or iterations < 1:
             raise ValueError("iterations must be a positive integer")
         if not isinstance(alpha, float) or alpha <= 0:
             raise ValueError("alpha must be positive")
-        if verbose or graph:
-            if not isinstance(step, int):
-                raise TypeError("step must be an integer")
-            if step <= 0 or step > iterations:
-                raise ValueError("step must be positive and <= iterations")
+        if not isinstance(step, int) or step <= 0 or step > iterations:
+            raise ValueError("step must be positive and <= iterations")
 
         costs = []
         for i in range(iterations):
@@ -121,13 +107,12 @@ class NeuralNetwork:
 
             if verbose and i % step == 0:
                 cost = self.cost(Y, A2)
+                costs.append(cost)
                 print(f"Cost after {i} iterations: {cost}")
-                costs.append((i, cost))
 
         if graph:
-            x_vals, y_vals = zip(*costs)
-            plt.plot(x_vals, y_vals, label='Cost')
-            plt.xlabel("Iterations")
+            plt.plot(range(0, iterations, step), costs, label="Cost")
+            plt.xlabel("Iteration")
             plt.ylabel("Cost")
             plt.title("Training Cost")
             plt.legend()
