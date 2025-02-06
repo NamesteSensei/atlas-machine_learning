@@ -4,7 +4,7 @@ import numpy as np
 
 class DeepNeuralNetwork:
     """
-    Implements a deep neural network for binary classification.
+    Implements a deep neural network  binary classification.
     
     Attributes:
         L (int): Number of layers in the network.
@@ -44,7 +44,7 @@ class DeepNeuralNetwork:
                 np.sqrt(2 / prev_layer_size)
             )
             self.__weights[f"b{layer}"] = np.zeros((layers[layer - 1], 1))
-            prev_layer_size = layers[layer - 1]  # Update for next layer
+            prev_layer_size = layers[layer - 1]  # Update next layer
 
     @property
     def L(self):
