@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Defines a deep neural network binary classification."""
+"""Defines a deep neural network for binary classification."""
 
 import numpy as np
 
@@ -43,22 +43,22 @@ class DeepNeuralNetwork:
 
     @property
     def L(self):
-        """Getter  the number of layers."""
+        """Getter for the number of layers."""
         return self.__L
 
     @property
     def cache(self):
-        """Getter  the cache dictionary."""
+        """Getter for the cache dictionary."""
         return self.__cache
 
     @property
     def weights(self):
-        """Getter  the weights dictionary."""
+        """Getter for the weights dictionary."""
         return self.__weights
 
     def forward_prop(self, X):
         """
-        Perform forward propagation using sigmoid activation.
+        Perform forward propagation using a **single loop**.
 
         Args:
             X (numpy.ndarray): Input data of shape (nx, m).
@@ -67,10 +67,13 @@ class DeepNeuralNetwork:
             tuple: (final output A, updated cache dictionary).
         """
         self.__cache["A0"] = X
+        output = X  # Track the activation output in one loop
+
         for layer in range(1, self.__L + 1):
             W = self.__weights[f"W{layer}"]
             b = self.__weights[f"b{layer}"]
-            Z = np.matmul(W, self.__cache[f"A{layer - 1}"]) + b
-            self.__cache[f"A{layer}"] = 1 / (1 + np.exp(-Z))
+            Z = np.matmul(W, output) + b
+            output = 1 / (1 + np.exp(-Z))  # Sigmoid activation
+            self.__cache[f"A{layer}"] = output
 
-        return self.__cache[f"A{self.__L}"], self.__cache
+        return output, self.__cache
