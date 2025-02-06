@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Deep Neural Network module"""
+"""Defines a deep neural network performing binary classification"""
 
 import numpy as np
 
 
 class DeepNeuralNetwork:
-    """Defines a deep neural network performing binary classification"""
+    """Deep Neural Network performing binary classification"""
 
     def __init__(self, nx, layers):
         """
@@ -13,7 +13,7 @@ class DeepNeuralNetwork:
 
         Parameters:
         nx (int): Number of input features
-        layers (list): List representing the number of nodes in each layer
+        layers (list): Number of nodes in each layer
 
         Raises:
         TypeError: If nx is not an integer
@@ -23,33 +23,37 @@ class DeepNeuralNetwork:
         # Validate nx
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
+
         if nx < 1:
             raise ValueError("nx must be a positive integer")
 
         # Validate layers
         if not isinstance(layers, list) or len(layers) == 0:
             raise TypeError("layers must be a list of positive integers")
+
         if not all(isinstance(nodes, int) and nodes > 0 for nodes in layers):
             raise TypeError("layers must be a list of positive integers")
 
+        # Initialize attributes
         self.nx = nx
         self.layers = layers
         self.L = len(layers)  # Number of layers
-        self.cache = {}       # Initialize cache dictionary
-        self.weights = {}     # Initialize weights dictionary
+        self.cache = {}       # Dictionary to hold intermediary values
+        self.weights = {}     # Dictionary to hold weights and biases
 
-        # He et al. initialization for weights and zeros for biases
-        for l in range(1, self.L + 1):
-            layer_size = layers[l - 1]
-            if l == 1:
-                prev_layer_size = nx
+        # He et al. initialization for weights and biases
+        for layer_idx in range(1, self.L + 1):
+            layer_key_W = 'W{}'.format(layer_idx)
+            layer_key_b = 'b{}'.format(layer_idx)
+
+            if layer_idx == 1:
+                weight_shape = (layers[layer_idx - 1], nx)
+                weight_init = np.random.randn(*weight_shape) * np.sqrt(2 / nx)
             else:
-                prev_layer_size = layers[l - 2]
+                weight_shape = (layers[layer_idx - 1], layers[layer_idx - 2])
+                prev_nodes = layers[layer_idx - 2]
+                weight_init = (np.random.randn(*weight_shape) *
+                               np.sqrt(2 / prev_nodes))
 
-            # Weights initialization
-            weight_key = f'W{l}'
-            bias_key = f'b{l}'
-            self.weights[weight_key] = (np.random.randn(layer_size, prev_layer_size) *
-                                        np.sqrt(2 / prev_layer_size))
-            # Biases initialization
-            self.weights[bias_key] = np.zeros((layer_size, 1))
+            self.weights[layer_key_W] = weight_init
+            self.weights[layer_key_b] = np.zeros((layers[layer_idx - 1], 1))
