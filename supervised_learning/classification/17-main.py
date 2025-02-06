@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script for DeepNeuralNetwork forward propagation.
+Test script fur DeepNeuralNetwork forward propagation.
 """
 
 import numpy as np

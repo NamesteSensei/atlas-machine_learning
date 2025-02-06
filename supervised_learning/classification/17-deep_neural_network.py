@@ -1,19 +1,24 @@
 #!/usr/bin/env python3
-"""Defines a deep neural network fur binary classification."""
-
 import numpy as np
 
 
 class DeepNeuralNetwork:
-    """Deep neural network performing binary classification."""
+    """
+    Implements a deep neural network for binary classification.
+    
+    Attributes:
+        L (int): Number of layers in the network.
+        cache (dict): Stores activated outputs of each layer.
+        weights (dict): Holds weights and biases of the network.
+    """
 
     def __init__(self, nx, layers):
         """
-        Initialize the deep neural network.
+        Initializes the deep neural network.
 
         Args:
             nx (int): Number of input features.
-            layers (list): Number of nodes in each layer.
+            layers (list): List of node counts per layer.
 
         Raises:
             TypeError: If nx is not an integer.
@@ -32,48 +37,47 @@ class DeepNeuralNetwork:
         self.__cache = {}
         self.__weights = {}
 
-        prev_layer_size = nx
+        prev_layer_size = nx  # Tracks size of the previous layer
         for layer in range(1, self.__L + 1):
             self.__weights[f"W{layer}"] = (
-                np.random.randn(layers[layer - 1], prev_layer_size)
-                * np.sqrt(2 / prev_layer_size)
+                np.random.randn(layers[layer - 1], prev_layer_size) *
+                np.sqrt(2 / prev_layer_size)
             )
             self.__weights[f"b{layer}"] = np.zeros((layers[layer - 1], 1))
-            prev_layer_size = layers[layer - 1]
+            prev_layer_size = layers[layer - 1]  # Update for next layer
 
     @property
     def L(self):
-        """Getter fur the number of layers."""
+        """Returns number of layers."""
         return self.__L
 
     @property
     def cache(self):
-        """Getter fur the cache dictionary."""
+        """Returns cache dictionary."""
         return self.__cache
 
     @property
     def weights(self):
-        """Getter fur the weights dictionary."""
+        """Returns weights dictionary."""
         return self.__weights
 
     def forward_prop(self, X):
         """
-        Perform forward propagation using a **single loop**.
+        Executes forward propagation.
 
         Args:
-            X (numpy.ndarray): Input data of shape (nx, m).
+            X (numpy.ndarray): Input data.
 
         Returns:
-            tuple: (final output A, updated cache dictionary).
+            tuple: Activated output of last layer and cache.
         """
-        self.__cache["A0"] = X
-        output = X  # Track the activation output in one loop
+        self.__cache["A0"] = X  # Store input data
+        prev_activation = X
 
         for layer in range(1, self.__L + 1):
-            W = self.__weights[f"W{layer}"]
-            b = self.__weights[f"b{layer}"]
-            Z = np.matmul(W, output) + b
-            output = 1 / (1 + np.exp(-Z))  # Sigmoid activation
-            self.__cache[f"A{layer}"] = output
+            Z = np.matmul(self.__weights[f"W{layer}"], prev_activation) + self.__weights[f"b{layer}"]
+            prev_activation = 1 / (1 + np.exp(-Z))  # Sigmoid activation
+            self.__cache[f"A{layer}"] = prev_activation
 
-        return output, self.__cache
+        return prev_activation, self.__cache
+
