@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
-"""Defines a deep neural network for binary classification."""
+"""
+Defines a deep neural network for binary classification.
+"""
+
 import numpy as np
 
 
 class DeepNeuralNetwork:
     """
-    Defines a deep neural network with multiple layers.
-
-    Attributes:
-        L (int): Number of layers in the network.
-        cache (dict): Stores all intermediary values.
-        weights (dict): Stores weights & biases using He et al. init.
+    Class that defines a deep neural network for binary classification.
     """
 
     def __init__(self, nx, layers):
@@ -19,7 +17,7 @@ class DeepNeuralNetwork:
 
         Args:
             nx (int): Number of input features.
-            layers (list): List of layer node counts.
+            layers (list): Number of nodes in each layer.
 
         Raises:
             TypeError: If nx is not an integer.
@@ -38,18 +36,18 @@ class DeepNeuralNetwork:
         self.__cache = {}
         self.__weights = {}
 
-        prev_layer_size = nx
+        prev_layer_size = nx  # Track previous layer size
         for layer_index, nodes in enumerate(layers, start=1):
             self.__weights[f"W{layer_index}"] = (
-                np.random.randn(nodes, prev_layer_size)
-                * np.sqrt(2 / prev_layer_size)
+                np.random.randn(nodes, prev_layer_size) *
+                np.sqrt(2 / prev_layer_size)
             )
             self.__weights[f"b{layer_index}"] = np.zeros((nodes, 1))
-            prev_layer_size = nodes
+            prev_layer_size = nodes  # Update for next layer
 
     @property
     def L(self):
-        """Getter for L (number of layers)."""
+        """Getter for number of layers."""
         return self.__L
 
     @property
