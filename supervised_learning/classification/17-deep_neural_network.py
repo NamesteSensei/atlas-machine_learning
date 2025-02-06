@@ -1,28 +1,23 @@
 #!/usr/bin/env python3
-"""
-Defines a deep neural network performing forward propagation.
-"""
+"""Module for DeepNeuralNetwork performing binary classification"""
 
 import numpy as np
 
 
 class DeepNeuralNetwork:
-    """
-    Class that defines a deep neural network for binary classification.
-    """
+    """Defines a deep neural network for binary classification."""
 
     def __init__(self, nx, layers):
         """
         Initializes the deep neural network.
-
+        
         Args:
             nx (int): Number of input features.
-            layers (list): Number of nodes in each layer.
+            layers (list): List with the number of nodes in each layer.
 
         Raises:
-            TypeError: If nx is not an integer.
-            ValueError: If nx is less than 1.
-            TypeError: If layers is not a list of positive integers.
+            TypeError: If nx is not an integer or layers is not a list.
+            ValueError: If nx is less than 1 or layers has non-positive ints.
         """
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
@@ -31,19 +26,20 @@ class DeepNeuralNetwork:
         if (not isinstance(layers, list) or len(layers) == 0 or
                 not all(isinstance(n, int) and n > 0 for n in layers)):
             raise TypeError("layers must be a list of positive integers")
-
+        
         self.__L = len(layers)
         self.__cache = {}
         self.__weights = {}
+        prev_layer = nx
 
-        prev_layer_size = nx  # Track previous layer size
-        for layer_index, nodes in enumerate(layers, start=1):
-            self.__weights[f"W{layer_index}"] = (
-                np.random.randn(nodes, prev_layer_size) *
-                np.sqrt(2 / prev_layer_size)
+        # ✅ SINGLE LOOP for weight initialization
+        for l in range(1, self.__L + 1):
+            self.__weights[f"W{l}"] = (
+                np.random.randn(layers[l - 1], prev_layer) *
+                np.sqrt(2 / prev_layer)
             )
-            self.__weights[f"b{layer_index}"] = np.zeros((nodes, 1))
-            prev_layer_size = nodes  # Update for next layer
+            self.__weights[f"b{l}"] = np.zeros((layers[l - 1], 1))
+            prev_layer = layers[l - 1]
 
     @property
     def L(self):
@@ -63,21 +59,19 @@ class DeepNeuralNetwork:
     def forward_prop(self, X):
         """
         Performs forward propagation using sigmoid activation.
-
+        
         Args:
             X (numpy.ndarray): Input data of shape (nx, m).
 
         Returns:
-            tuple: (A, cache) where:
-                - A is the final layer activation.
-                - cache contains all intermediate values.
+            tuple: The final activated output and cache dictionary.
         """
-        self.__cache["A0"] = X  # Store input layer
-        for layer in range(1, self.__L + 1):
-            W = self.__weights[f"W{layer}"]
-            b = self.__weights[f"b{layer}"]
-            Z = np.matmul(W, self.__cache[f"A{layer - 1}"]) + b
-            A = 1 / (1 + np.exp(-Z))  # Sigmoid activation
-            self.__cache[f"A{layer}"] = A
+        self.__cache["A0"] = X
 
-        return A, self.__cache
+        # ✅ SINGLE LOOP for forward propagation
+        for l in range(1, self.__L + 1):
+            W, b = self.__weights[f"W{l}"], self.__weights[f"b{l}"]
+            Z = np.matmul(W, self.__cache[f"A{l - 1}"]) + b
+            self.__cache[f"A{l}"] = 1 / (1 + np.exp(-Z))  # Sigmoid activation
+
+        return self.__cache[f"A{self.__L}"], self.__cache
