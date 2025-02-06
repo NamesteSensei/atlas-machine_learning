@@ -39,22 +39,19 @@ class DeepNeuralNetwork:
                 not all(isinstance(n, int) and n > 0 for n in layers)):
             raise TypeError("layers must be a list of positive integers")
 
-        # Initialize attributes
         self.__L = len(layers)
         self.__cache = {}
         self.__weights = {}
 
-        # ✅ Using only ONE loop to initialize weights & biases
+        # ✅ Single loop for initializing weights & biases
         prev_layer_size = nx  # First layer takes input of size `nx`
-        for layer_index, nodes in enumerate(layers, start=1):
-            # He et al. initialization for weights
-            self.__weights[f"W{layer_index}"] = (
+        for i, nodes in enumerate(layers):
+            self.__weights[f"W{i + 1}"] = (
                 np.random.randn(nodes, prev_layer_size) *
                 np.sqrt(2 / prev_layer_size)
             )
-            # Bias initialized as zeros
-            self.__weights[f"b{layer_index}"] = np.zeros((nodes, 1))
-            prev_layer_size = nodes  # Update prev_layer_size for next iteration
+            self.__weights[f"b{i + 1}"] = np.zeros((nodes, 1))
+            prev_layer_size = nodes  # Update for next iteration
 
     @property
     def L(self):
