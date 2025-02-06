@@ -1,22 +1,26 @@
 #!/usr/bin/env python3
-"""
-Test script for DeepNeuralNetwork class.
-Loads dataset, initializes, and prints attributes.
-"""
 
 import numpy as np
+
 Deep = __import__('16-deep_neural_network').DeepNeuralNetwork
 
-# Load training dataset
+# Load the dataset (ensure the path to 'Binary_Train.npz' is correct)
 lib_train = np.load('../data/Binary_Train.npz')
 X_3D, Y = lib_train['X'], lib_train['Y']
-X = X_3D.reshape((X_3D.shape[0], -1)).T
+# Reshape X to have the correct dimensions (features, examples)
+X = X_3D.reshape((X_3D.shape[0], -1)).T  # (nx, m)
 
-# Initialize deep neural network
+# Set a seed for reproducibility
 np.random.seed(0)
-deep = Deep(X.shape[0], [5, 3, 1])
 
-# Print attributes
-print(deep.cache)  # Should print an empty dictionary
-print(deep.weights)  # Should print initialized weights & biases
-print(deep.L)  # Should print the number of layers
+# Initialize the Deep Neural Network
+deep = Deep(X.shape[0], [5, 3, 1])  # Layers with 5, 3, and 1 nodes respectively
+
+# Print the attributes
+print(deep.cache)    # Should be an empty dictionary
+print(deep.weights)  # Should contain initialized weights and biases
+print(deep.L)        # Number of layers
+
+# Modify and print L to demonstrate it's a public attribute
+deep.L = 10
+print(deep.L)
