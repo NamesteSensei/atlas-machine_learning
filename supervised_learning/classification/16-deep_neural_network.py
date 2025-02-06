@@ -1,30 +1,25 @@
 #!/usr/bin/env python3
-"""Module: 16-deep_neural_network
-Defines a deep neural network for binary classification.
-"""
-
+"""Defines a deep neural network for binary classification."""
 import numpy as np
 
 
 class DeepNeuralNetwork:
     """
-    Defines a deep neural network performing binary classification.
+    Defines a deep neural network with multiple layers.
 
-    Private instance attributes:
-        __L (int): Number of layers in the network.
-        __cache (dict): Stores all intermediary values of the network.
-        __weights (dict): Stores all weights and biases of the network.
-            - Weights initialized using He et al. initialization.
+    Attributes:
+        L (int): Number of layers in the network.
+        cache (dict): Stores all intermediary values.
+        weights (dict): Stores weights & biases using He et al. init.
     """
 
     def __init__(self, nx, layers):
         """
-        Initialize a deep neural network.
+        Initializes the deep neural network.
 
         Args:
             nx (int): Number of input features.
-            layers (list): List of positive integers representing the number
-                of nodes in each layer.
+            layers (list): List of layer node counts.
 
         Raises:
             TypeError: If nx is not an integer.
@@ -43,27 +38,26 @@ class DeepNeuralNetwork:
         self.__cache = {}
         self.__weights = {}
 
-        # ✅ Single loop for initializing weights & biases
-        prev_layer_size = nx  # First layer takes input of size `nx`
-        for i, nodes in enumerate(layers):
-            self.__weights[f"W{i + 1}"] = (
-                np.random.randn(nodes, prev_layer_size) *
-                np.sqrt(2 / prev_layer_size)
+        prev_layer_size = nx
+        for layer_index, nodes in enumerate(layers, start=1):
+            self.__weights[f"W{layer_index}"] = (
+                np.random.randn(nodes, prev_layer_size)
+                * np.sqrt(2 / prev_layer_size)
             )
-            self.__weights[f"b{i + 1}"] = np.zeros((nodes, 1))
-            prev_layer_size = nodes  # Update for next iteration
+            self.__weights[f"b{layer_index}"] = np.zeros((nodes, 1))
+            prev_layer_size = nodes
 
     @property
     def L(self):
-        """Getter for the number of layers."""
+        """Getter for L (number of layers)."""
         return self.__L
 
     @property
     def cache(self):
-        """Getter for the cache dictionary."""
+        """Getter for cache dictionary."""
         return self.__cache
 
     @property
     def weights(self):
-        """Getter for the weights dictionary."""
+        """Getter for weights dictionary."""
         return self.__weights
