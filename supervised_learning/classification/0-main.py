@@ -1,20 +1,26 @@
-#!/usr/bin/env python3
-""" Main script to test the Neuron class """
-
 import numpy as np
-Neuron = __import__('0-neuron').Neuron
 
-# Simulate dataset
-np.random.seed(0)
-nx = 5  # Number of input features
-neuron = Neuron(nx)
 
-# Print initialized values
-print("Weights:\n", neuron.W)
-print("Shape of Weights:", neuron.W.shape)
-print("Bias:", neuron.b)
-print("Activated Output:", neuron.A)
-
-# Modify A and check
-neuron.A = 10
-print("Modified A:", neuron.A)
+class DeepNeuralNetwork:
+    """Defines a deep neural network performing binary classification"""
+    
+    def __init__(self, nx, layers):
+        """Class constructor"""
+        if not isinstance(nx, int):
+            raise TypeError("nx must be an integer")
+        if nx < 1:
+            raise ValueError("nx must be a positive integer")
+        if not isinstance(layers, list) or len(layers) == 0:
+            raise TypeError("layers must be a list of positive integers")
+        if any(not isinstance(n, int) or n <= 0 for n in layers):
+            raise TypeError("layers must be a list of positive integers")
+        
+        self.L = len(layers)
+        self.cache = {}
+        self.weights = {}
+        
+        input_units = nx
+        for l in range(self.L):  # Fixed indentation and lowercase 'for'
+            self.weights[f'W{l+1}'] = np.random.randn(layers[l], input_units) * np.sqrt(2 / input_units)
+            self.weights[f'b{l+1}'] = np.zeros((layers[l], 1))
+            input_units = layers[l]
