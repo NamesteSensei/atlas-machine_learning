@@ -3,7 +3,7 @@ import numpy as np
 
 
 class DeepNeuralNetwork:
-    """Defines a deep neural network performing binary classification"""
+    """Defines a deep neural network perming binary classification"""
 
     def __init__(self, nx, layers):
         """Class constructor"""
@@ -21,7 +21,7 @@ class DeepNeuralNetwork:
         self.weights = {}
 
         input_units = nx
-        for l in range(self.L):  # Fixed lowercase 'for'
+        for l in range(self.L):
             self.weights[f'W{l+1}'] = np.random.randn(layers[l], input_units) * np.sqrt(2 / input_units)
             self.weights[f'b{l+1}'] = np.zeros((layers[l], 1))
             input_units = layers[l]
