@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import numpy as np
 from deep_neural_network import DeepNeuralNetwork
 
@@ -44,4 +45,3 @@ if __name__ == "__main__":
     print(dnn.cache)  # Expected: {}
     print(dnn.weights.keys())  # Expected: W1, b1, W2, b2, W3, b3
     print(dnn.L)  # Expected: 3
-
