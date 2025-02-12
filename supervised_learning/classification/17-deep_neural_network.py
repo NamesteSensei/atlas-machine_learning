@@ -1,82 +1,73 @@
 #!/usr/bin/env python3
 import numpy as np
 
+"""
+/** 
+   This module defines a deep neural network with all instance attributes set as private.
+*/
+"""
 
 class DeepNeuralNetwork:
     """
-    Implements a deep neural network for binary classification.
-    
-    Attributes:
-        L (int): Number of layers in the network.
-        cache (dict): Stores activated outputs of each layer.
-        weights (dict): Holds weights and biases of the network.
+    /**
+      Class that defines a deep neural network executing binary classification.
+      Private attributes:
+        __L      - number of layers,
+        __cache  - a storage for intermediate values,
+        __weights - a storage for weights and biases.
+    */
     """
-
     def __init__(self, nx, layers):
         """
-        Initializes the deep neural network.
-
-        Args:
-            nx (int): Number of input features.
-            layers (list): List of node counts per layer.
-
-        Raises:
-            TypeError: If nx is not an integer.
-            ValueError: If nx is less than 1.
-            TypeError: If layers is not a list of positive integers.
+        /**
+          Constructor to initialize the deep neural network.
+          nx is the number of input features.
+          layers is a list that indicates the number of nodes in each layer.
+        */
         """
-        if not isinstance(nx, int):
+        if type(nx) is not int:
             raise TypeError("nx must be an integer")
         if nx < 1:
             raise ValueError("nx must be a positive integer")
-        if (not isinstance(layers, list) or len(layers) == 0 or
-                not all(isinstance(n, int) and n > 0 for n in layers)):
+        if type(layers) is not list or len(layers) == 0:
             raise TypeError("layers must be a list of positive integers")
-
         self.__L = len(layers)
         self.__cache = {}
         self.__weights = {}
-
-        prev_layer_size = nx  # Tracks size of the previous layer
-        for layer in range(1, self.__L + 1):
-            self.__weights[f"W{layer}"] = (
-                np.random.randn(layers[layer - 1], prev_layer_size) *
-                np.sqrt(2 / prev_layer_size)
-            )
-            self.__weights[f"b{layer}"] = np.zeros((layers[layer - 1], 1))
-            prev_layer_size = layers[layer - 1]  # Update for next layer
+        prev = nx
+        i = 0
+        while i < self.__L:
+            if type(layers[i]) is not int or layers[i] < 1:
+                raise TypeError("layers must be a list of positive integers")
+            self.__weights["W{}".format(i + 1)] = (np.random.randn(layers[i], prev) *
+                                                   np.sqrt(2 / prev))
+            self.__weights["b{}".format(i + 1)] = np.zeros((layers[i], 1))
+            prev = layers[i]
+            i += 1
 
     @property
     def L(self):
-        """Returns number of layers."""
+        """
+        /**
+          Getter to obtain the number of layers.
+        */
+        """
         return self.__L
 
     @property
     def cache(self):
-        """Returns cache dictionary."""
+        """
+        /**
+          Getter to obtain the cache storage.
+        */
+        """
         return self.__cache
 
     @property
     def weights(self):
-        """Returns weights dictionary."""
+        """
+        /**
+          Getter to obtain the weights storage.
+        */
+        """
         return self.__weights
-
-    def forward_prop(self, X):
-        """
-        Executes forward propagation.
-
-        Args:
-            X (numpy.ndarray): Input data.
-
-        Returns:
-            tuple: Activated output of lastlayer and cache.
-        """
-        self.__cache["A0"] = X  # Store input data
-        prev_activation = X
-
-        for layer in range(1, self.__L + 1):
-            Z = np.matmul(self.__weights[f"W{layer}"], prev_activation) + self.__weights[f"b{layer}"]
-            prev_activation = 1 / (1 + np.exp(-Z))  # Sigmoid activation
-            self.__cache[f"A{layer}"] = prev_activation
-
-        return prev_activation, self.__cache
