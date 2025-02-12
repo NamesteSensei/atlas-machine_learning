@@ -4,7 +4,7 @@ import numpy as np
 """
 /** 
    This module defines a deep neural network with private attributes,
-   including a method to compute cost using logistic regression.
+   including methods to compute signal progression, cost, evaluation, and weight updates via gradient descent.
 */
 """
 
@@ -95,3 +95,42 @@ class DeepNeuralNetwork:
         m = Y.shape[1]
         cost_val = -np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)) / m
         return cost_val
+
+    def evaluate(self, X, Y):
+        """
+          Computes the network prediction and cost.
+          X is a numpy.ndarray with shape (nx, m) containing input data.
+          Y is a numpy.ndarray with shape (1, m) containing true labels.
+          A prediction is 1 when output is at least 0.5; else 0.
+          Returns the prediction and cost.
+        """
+        A, _ = self.forward_prop(X)
+        cost_val = self.cost(Y, A)
+        prediction = np.where(A >= 0.5, 1, 0)
+        return prediction, cost_val
+
+    def gradient_descent(self, Y, cache, alpha=0.05):
+        """
+          Executes one cycle of gradient descent to adjust weights.
+          Y is a numpy.ndarray with shape (1, m) containing true labels.
+          cache is a storage containing intermediate values.
+          alpha is the learning rate.
+          The output-layer derivative is computed as (A – Y).
+          Hidden layers use the sigmoid derivative (A * (1 – A)).
+          Updates the private weights.
+        """
+        m = Y.shape[1]
+        i = self.__L
+        dZ = cache["A{}".format(i)] - Y
+        while i >= 1:
+            A_prev = cache["A{}".format(i - 1)]
+            W = self.__weights["W{}".format(i)]
+            dW = np.matmul(dZ, A_prev.T) / m
+            db = np.sum(dZ, axis=1, keepdims=True) / m
+            self.__weights["W{}".format(i)] = W - alpha * dW
+            self.__weights["b{}".format(i)] = self.__weights["b{}".format(i)] - alpha * db
+            if i > 1:
+                A_current = cache["A{}".format(i - 1)]
+                dZ = (np.matmul(self.__weights["W{}".format(i)].T, dZ) *
+                      (A_current * (1 - A_current)))
+            i -= 1
