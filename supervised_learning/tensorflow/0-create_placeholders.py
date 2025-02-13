@@ -1,29 +1,30 @@
 #!/usr/bin/env python3
 """
-/** 
- * Module 0-create_placeholders:
- * This module contains a function to create TensorFlow placeholders
- * for the input data and one-hot labels for a neural network.
- */
+0-create_placeholders.py
+This script defines a function to create TensorFlow placeholders for input data and labels.
 """
 
 import tensorflow.compat.v1 as tf
-tf.disable_eager_execution()  # /** Disable eager execution for TF v1 compatibility **/
+tf.disable_eager_execution()  # Ensures TensorFlow v1 compatibility
 
 def create_placeholders(nx, classes):
     """
-    /** 
-     * create_placeholders - Creates placeholders for neural network inputs.
-     * @param nx: Number of features (columns) in the input data.
-     * @param classes: Number of classes (output nodes) for one-hot labels.
-     * @return: Tuple of placeholders (x, y)
-     */
-    x = tf.placeholder(tf.float32, shape=(None, nx), name="x")  # /** Placeholder for input data **/
-    y = tf.placeholder(tf.float32, shape=(None, classes), name="y")  # /** Placeholder for one-hot labels **/
+    Creates placeholders for the neural network.
+
+    Parameters:
+    nx (int): Number of feature columns in the input data.
+    classes (int): Number of classes in the classifier.
+
+    Returns:
+    x (tf.placeholder): Placeholder for input data (shape: [None, nx])
+    y (tf.placeholder): Placeholder for one-hot labels (shape: [None, classes])
+    """
+    x = tf.placeholder(dtype=tf.float32, shape=(None, nx), name="x")
+    y = tf.placeholder(dtype=tf.float32, shape=(None, classes), name="y")
     return x, y
 
+# Only runs when the script is executed directly (for testing)
 if __name__ == "__main__":
-    # /** Testing the function by printing the placeholders **/
     x, y = create_placeholders(784, 10)
     print(x)
     print(y)
