@@ -44,23 +44,17 @@ class DeepNeuralNetwork:
 
     @property
     def L(self):
-        """
-          Getter to obtain the number of layers.
-        """
+        """ Returns the number of layers """
         return self.__L
 
     @property
     def cache(self):
-        """
-          Getter to obtain the cache storage.
-        """
+        """ Returns the cache storage """
         return self.__cache
 
     @property
     def weights(self):
-        """
-          Getter to obtain the weights storage.
-        """
+        """ Returns the weights storage """
         return self.__weights
 
     def forward_prop(self, X):
@@ -110,13 +104,11 @@ class DeepNeuralNetwork:
           Y is a numpy.ndarray with shape (1, m) containing true labels.
           cache is a storage containing intermediate values.
           alpha is the learning rate.
-          The output-layer derivative is computed as (A – Y).
-          Hidden layers use the sigmoid derivative (A * (1 – A)).
-          Updates the private weights.
+          Uses a **single loop** to update weights.
         """
         m = Y.shape[1]
-        dZ = cache["A{}".format(self.__L)] - Y
-        for i in range(self.__L, 0, -1):  # 🔴 Loop 3: Gradient Descent
+        dZ = cache["A{}".format(self.__L)] - Y  # Output layer error
+        for i in range(self.__L, 0, -1):  # 🔴 Loop 3: Gradient Descent (One loop allowed)
             A_prev = cache["A{}".format(i - 1)]
             dW = np.matmul(dZ, A_prev.T) / m
             db = np.sum(dZ, axis=1, keepdims=True) / m
@@ -125,24 +117,3 @@ class DeepNeuralNetwork:
             if i > 1:
                 A = cache["A{}".format(i - 1)]
                 dZ = np.matmul(self.__weights["W{}".format(i)].T, dZ) * (A * (1 - A))
-
-    def train(self, X, Y, iterations=5000, alpha=0.05):
-        """
-          Trains the deep neural network.
-          X is a numpy.ndarray with shape (nx, m) containing input data.
-          Y is a numpy.ndarray with shape (1, m) containing true labels.
-          iterations is the number of training cycles.
-          alpha is the learning rate.
-          Raises exceptions if iterations or alpha are invalid.
-          Returns the evaluation on the training data.
-        """
-        if type(iterations) is not int or iterations <= 0:
-            raise ValueError("iterations must be a positive integer")
-        if type(alpha) is not float or alpha <= 0:
-            raise ValueError("alpha must be positive")
-
-        for _ in range(iterations):  # Calls forward_prop and gradient_descent within loop
-            A, cache = self.forward_prop(X)
-            self.gradient_descent(Y, cache, alpha)
-        
-        return self.evaluate(X, Y)
