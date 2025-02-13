@@ -13,7 +13,7 @@ class DeepNeuralNetwork:
         
         Parameters:
         # nx: number of input features.
-        # layers: list of nodes in each layer.
+        # layers: list containing the number of nodes in each layer.
         # Validations:
         #   - nx must be an integer and >= 1.
         #   - layers must be a non-empty list of positive integers.
@@ -31,9 +31,9 @@ class DeepNeuralNetwork:
         prev = nx                 # Number of nodes in the previous layer (input size)
         i = 1
         while i <= self.__L:
-            # He initialization for weights for layer i
+            # He initialization applied to weights in layer i
             self.__weights["W" + str(i)] = np.random.randn(layers[i - 1], prev) * np.sqrt(2 / prev)
-            # Biases initialized to zeros for layer i
+            # Biases set to zeros in layer i
             self.__weights["b" + str(i)] = np.zeros((layers[i - 1], 1))
             prev = layers[i - 1]   # Update previous layer's node count
             i += 1
@@ -69,7 +69,7 @@ class DeepNeuralNetwork:
             # Get current layer's weights and biases
             W = self.__weights["W" + str(i)]
             b = self.__weights["b" + str(i)]
-            # Activation from previous layer
+            # Activation from the previous layer
             A_prev = self.__cache["A" + str(i - 1)]
             # Compute linear combination
             Z = np.matmul(W, A_prev) + b
@@ -131,6 +131,6 @@ class DeepNeuralNetwork:
             self.__weights["W" + str(i)] -= alpha * dW
             self.__weights["b" + str(i)] -= alpha * db
             if i > 1:
-                # Backpropagate the error to the previous layer using the derivative of the sigmoid function
+                # Backpropagate error to the previous layer using the derivative of the sigmoid function
                 dZ = np.matmul(self.__weights["W" + str(i)].T, dZ) * (A_prev * (1 - A_prev))
             i -= 1

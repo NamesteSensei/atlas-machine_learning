@@ -3,22 +3,26 @@ import numpy as np
 
 """
 /**
-   Deep neural network for multiclass classification.
-   Hidden layers use the sigmoid activation; the output layer uses softmax.
+   Deep neural network for multiclass classification with selectable hidden-layer activation.
+   Hidden layers use the activation specified by the parameter ('sig' for sigmoid or 'tanh' for hyperbolic tangent);
+   the output layer always uses softmax.
 */
 """
 
 class DeepNeuralNetwork:
-    def __init__(self, nx, layers):
+    def __init__(self, nx, layers, activation='sig'):
         if type(nx) is not int:
             raise TypeError("nx must be an integer")
         if nx < 1:
             raise ValueError("nx must be a positive integer")
         if type(layers) is not list or len(layers)==0:
             raise TypeError("layers must be a list of positive integers")
+        if activation not in ['sig', 'tanh']:
+            raise ValueError("activation must be 'sig' or 'tanh'")
         self.__L = len(layers)
         self.__cache = {}
         self.__weights = {}
+        self.__activation = activation
         prev = nx
         i = 0  # one loop in __init__
         while i < self.__L:
@@ -38,6 +42,9 @@ class DeepNeuralNetwork:
     @property
     def weights(self):
         return self.__weights
+    @property
+    def activation(self):
+        return self.__activation
 
     def forward_prop(self, X):
         self.__cache["A0"] = X
@@ -51,7 +58,10 @@ class DeepNeuralNetwork:
                 exp_Z = np.exp(Z - np.max(Z, axis=0, keepdims=True))
                 A = exp_Z / np.sum(exp_Z, axis=0, keepdims=True)
             else:
-                A = 1/(1+np.exp(-Z))
+                if self.__activation == 'sig':
+                    A = 1/(1+np.exp(-Z))
+                else:
+                    A = np.tanh(Z)
             self.__cache["A{}".format(i+1)] = A
             i += 1
         return A, self.__cache
@@ -69,8 +79,7 @@ class DeepNeuralNetwork:
     def gradient_descent(self, Y, cache, alpha=0.05):
         m = Y.shape[1]
         i = self.__L  # one loop in gradient_descent
-        A_L = cache["A{}".format(i)]
-        dZ = A_L - Y
+        dZ = cache["A{}".format(i)] - Y
         while i >= 1:
             A_prev = cache["A{}".format(i-1)]
             W = self.__weights["W{}".format(i)]
@@ -80,10 +89,13 @@ class DeepNeuralNetwork:
             self.__weights["W{}".format(i)] = W - alpha*dW
             self.__weights["b{}".format(i)] = self.__weights["b{}".format(i)] - alpha*db
             if i > 1:
-                dZ = np.matmul(W_copy.T, dZ) * (A_prev*(1-A_prev))
+                if self.__activation == 'sig':
+                    dZ = np.matmul(W_copy.T, dZ) * (A_prev*(1-A_prev))
+                else:
+                    dZ = np.matmul(W_copy.T, dZ) * (1 - np.power(A_prev, 2))
             i -= 1
 
-    def train(self, X, Y, iterations=5000, alpha=0.05):
+    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True, step=100):
         if type(iterations) is not int:
             raise TypeError("iterations must be an integer")
         if iterations<=0:
@@ -92,9 +104,26 @@ class DeepNeuralNetwork:
             raise TypeError("alpha must be a float")
         if alpha<=0:
             raise ValueError("alpha must be positive")
+        if verbose or graph:
+            if type(step) is not int:
+                raise TypeError("step must be an integer")
+            if step<=0 or step>iterations:
+                raise ValueError("step must be positive and <= iterations")
+        cost_list = []
+        step_list = []
         i = 0  # one loop in train
-        while i < iterations:
+        while i <= iterations:
             A, cache = self.forward_prop(X)
-            self.gradient_descent(Y, cache, alpha)
+            if i % step == 0 or i == iterations:
+                cost_val = self.cost(Y, A)
+                cost_list.append(cost_val)
+                step_list.append(i)
+                if verbose:
+                    print("Cost after {} iterations: {}".format(i, cost_val))
+            if i < iterations:
+                self.gradient_descent(Y, cache, alpha)
             i += 1
+        # Note: graph plotting is handled in the test file.
+        self.__cache["cost_list"] = cost_list
+        self.__cache["step_list"] = step_list
         return self.evaluate(X, Y)
