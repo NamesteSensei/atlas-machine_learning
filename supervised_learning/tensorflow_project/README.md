@@ -7,5 +7,3 @@ This project implements a neural network using **TensorFlow 1.x**. The objective
 - Computing accuracy and loss.
 - Training using gradient descent.
 - Saving and evaluating the model.
-
-## **Directory Structure**
