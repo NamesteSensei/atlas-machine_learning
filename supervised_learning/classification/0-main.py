@@ -1,20 +1,13 @@
 #!/usr/bin/env python3
-
 import numpy as np
 from deep_neural_network import DeepNeuralNetwork
 
+lib_train = np.load('../data/Binary_Train.npz')
+X_3D, Y = lib_train['X'], lib_train['Y']
+X = X_3D.reshape((X_3D.shape[0], -1)).T
+
 np.random.seed(0)
-X = np.random.randn(10, 5)
-Y = np.array([[1, 0, 1, 0, 1]])
-
-dnn = DeepNeuralNetwork(10, [5, 5, 5, 5, 5])
-A, cache = dnn.forward_prop(X)
-print("A:", A)
-
-print("\nCost:", dnn.cost(Y, A))
-
-prediction, cost = dnn.evaluate(X, Y)
-print("\nPrediction:", prediction)
-print("Evaluation Cost:", cost)
-
-dnn.train(X, Y, iterations=100, alpha=0.01)
+deep = DeepNeuralNetwork(X.shape[0], [5, 3, 1])
+A, cost = deep.evaluate(X, Y)
+print(A)
+print(cost)
