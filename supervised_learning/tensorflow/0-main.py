@@ -16,8 +16,11 @@ def one_hot(Y, classes):
 
 
 if __name__ == "__main__":
-    # Load the MNIST data from the correct relative path
-    data = np.load("../data/mnist.npz")
+    # Set NumPy print options to match expected output
+    np.set_printoptions(precision=3, suppress=True)
+    
+    # Load the MNIST data using the uppercase filename
+    data = np.load("../data/MNIST.npz")
     X_test = data["X_test"]
     X_test = X_test.reshape((X_test.shape[0], -1))
     Y_test = data["Y_test"]
@@ -25,5 +28,6 @@ if __name__ == "__main__":
 
     # Evaluate the network using the saved model from evaluate.chpt
     pred, _, _ = evaluate(X_test, Y_test_oh, "evaluate.chpt")
-    # Print the network's prediction array
+    
+    # Print the network's prediction array in the required format
     print(pred)
