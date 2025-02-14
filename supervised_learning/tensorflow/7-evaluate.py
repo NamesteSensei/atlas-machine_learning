@@ -15,9 +15,9 @@ def evaluate(X, Y, save_path):
         save_path: path to load the saved model from.
 
     Returns:
-        The network's prediction, accuracy, and loss, respectively.
+        A tuple: (network's prediction, accuracy, loss).
     """
-    # Retrieve the tensors and operation from the collections
+    # Retrieve tensors from collections
     x = tf.get_collection("x")[0]
     y = tf.get_collection("y")[0]
     y_pred = tf.get_collection("y_pred")[0]
@@ -28,9 +28,9 @@ def evaluate(X, Y, save_path):
     saver = tf.train.Saver()
 
     with tf.Session() as sess:
-        # Restore the model from the given save_path
+        # Restore the model from the provided save_path
         saver.restore(sess, save_path)
-        # Evaluate the predictions, accuracy, and loss using the restored graph
+        # Evaluate the prediction, accuracy, and loss
         pred, acc, cost = sess.run([y_pred, accuracy, loss],
                                    feed_dict={x: X, y: Y})
     return pred, acc, cost

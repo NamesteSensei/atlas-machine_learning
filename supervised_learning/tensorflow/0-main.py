@@ -1,18 +1,29 @@
 #!/usr/bin/env python3
-"""
-/** 
- * 0-main.py:
- * This file tests the creation of placeholders for the input data and one-hot labels.
- */
-"""
+"""Test file for evaluating the network using the evaluate.chpt checkpoint."""
 
+import numpy as np
 import tensorflow.compat.v1 as tf
 tf.disable_eager_execution()
 
-# Import the create_placeholders function from module 0
-create_placeholders = __import__('0-create_placeholders').create_placeholders
+evaluate = __import__('7-evaluate').evaluate
 
-# Create placeholders with 784 features and 10 classes
-x, y = create_placeholders(784, 10)
-print(x)
-print(y)
+
+def one_hot(Y, classes):
+    """Convert an array to a one-hot matrix."""
+    one_hot_matrix = np.zeros((Y.shape[0], classes))
+    one_hot_matrix[np.arange(Y.shape[0]), Y] = 1
+    return one_hot_matrix
+
+
+if __name__ == "__main__":
+    # Load the MNIST data
+    data = np.load("MNIST.npz")
+    X_test = data["X_test"]
+    X_test = X_test.reshape((X_test.shape[0], -1))
+    Y_test = data["Y_test"]
+    Y_test_oh = one_hot(Y_test, 10)
+
+    # Evaluate the network using the saved model from evaluate.chpt
+    pred, _, _ = evaluate(X_test, Y_test_oh, "evaluate.chpt")
+    # Print the network's prediction array
+    print(pred)
