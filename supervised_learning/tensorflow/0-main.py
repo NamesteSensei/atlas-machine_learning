@@ -16,8 +16,8 @@ def one_hot(Y, classes):
 
 
 if __name__ == "__main__":
-    # Load the MNIST data
-    data = np.load("MNIST.npz")
+    # Load the MNIST data from the correct relative path
+    data = np.load("../data/mnist.npz")
     X_test = data["X_test"]
     X_test = X_test.reshape((X_test.shape[0], -1))
     Y_test = data["Y_test"]
