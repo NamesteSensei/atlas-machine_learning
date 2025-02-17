@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""
+Module for computing normalization constants.
+
+This script contains a function that calculates the mean and
+standard deviation for each feature in a dataset. It is used
+for standardizing input data before training machine learning models.
+"""
 import numpy as np
 
 
