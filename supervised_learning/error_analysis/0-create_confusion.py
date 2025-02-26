@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 """
-This module provides a function to create a confusion matrix
-for evaluating classification models.
-
-Functions:
-- create_confusion_matrix: Computes a confusion matrix from one-hot encoded labels.
+This module creates a confusion matrix for classification models.
 """
 
 import numpy as np
@@ -12,29 +8,30 @@ import numpy as np
 
 def create_confusion_matrix(labels, logits):
     """
-    Creates a confusion matrix
+    Builds a confusion matrix from predicted and true labels.
 
     Parameters:
-    - labels: numpy.ndarray of shape (m, classes),
-              true labels (one-hot encoded)
-    - logits: numpy.ndarray of shape (m, classes),
-              predicted labels (one-hot encoded)
+    - labels: numpy.ndarray of shape (m, classes)
+              One-hot encoded true labels.
+    - logits: numpy.ndarray of shape (m, classes)
+              One-hot encoded predicted labels.
 
     Returns:
-    - confusion: numpy.ndarray of shape (classes, classes) with counts
+    - confusion: numpy.ndarray of shape (classes, classes)
+                 Counts of correct and incorrect predictions.
     """
 
-    # number of data points and classes
+    # Get the number of classes
     m, classes = labels.shape
 
-    # converts one-hot encoded labels to class indices
+    # Convert one-hot encoded labels to class indices
     true_labels = np.argmax(labels, axis=1)
     predicted_labels = np.argmax(logits, axis=1)
 
-    # init an empty confusion matrix
+    # Initialize an empty confusion matrix
     confusion = np.zeros((classes, classes))
 
-    # populates confusion matrix by counting occurrences
+    # Count occurrences for each prediction
     for i in range(m):
         confusion[true_labels[i], predicted_labels[i]] += 1
 
