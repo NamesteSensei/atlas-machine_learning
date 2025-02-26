@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+"""
+This module provides a function to create a confusion matrix
+for evaluating classification models.
+
+Functions:
+- create_confusion_matrix: Computes a confusion matrix from one-hot encoded labels.
+"""
+
 import numpy as np
 
 
