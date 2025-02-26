@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-This module calculates the sensitivity (recall) for each class
+This module calculates the precision for each class
 in a confusion matrix.
 """
 
 import numpy as np
 
 
-def sensitivity(confusion):
+def precision(confusion):
     """
-    Computes sensitivity (recall) for each class in a confusion matrix.
+    Computes precision for each class in a confusion matrix.
 
     Parameters:
     - confusion: numpy.ndarray of shape (classes, classes)
@@ -18,16 +18,16 @@ def sensitivity(confusion):
 
     Returns:
     - numpy.ndarray of shape (classes,)
-      containing sensitivity for each class.
+      containing precision for each class.
     """
 
     # Get the True Positives (TP) - diagonal values
     TP = np.diag(confusion)
 
-    # Get the sum of each row (TP + FN)
-    FN = np.sum(confusion, axis=1)
+    # Get the sum of each column (TP + FP)
+    FP = np.sum(confusion, axis=0)
 
-    # Compute Sensitivity (Recall)
-    sensitivity_values = TP / FN
+    # Compute Precision
+    precision_values = TP / FP
 
-    return sensitivity_values
+    return precision_values
