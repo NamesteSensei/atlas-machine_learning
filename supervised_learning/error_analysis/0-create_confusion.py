@@ -7,8 +7,10 @@ def create_confusion_matrix(labels, logits):
     Creates a confusion matrix
 
     Parameters:
-    - labels: numpy.ndarray of shape (m, classes), true labels (one-hot encoded)
-    - logits: numpy.ndarray of shape (m, classes), predicted labels (one-hot encoded)
+    - labels: numpy.ndarray of shape (m, classes),
+              true labels (one-hot encoded)
+    - logits: numpy.ndarray of shape (m, classes),
+              predicted labels (one-hot encoded)
 
     Returns:
     - confusion: numpy.ndarray of shape (classes, classes) with counts
@@ -17,7 +19,7 @@ def create_confusion_matrix(labels, logits):
     # number of data points and classes
     m, classes = labels.shape
 
-    # convers one-hot encoded labels to class indices
+    # converts one-hot encoded labels to class indices
     true_labels = np.argmax(labels, axis=1)
     predicted_labels = np.argmax(logits, axis=1)
 
