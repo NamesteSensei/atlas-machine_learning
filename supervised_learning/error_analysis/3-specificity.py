@@ -24,17 +24,17 @@ def specificity(confusion):
     # Get the total number of samples
     total = np.sum(confusion)
 
-    # Get the True Positives (TP) - diagonal values
+    # Get True Positives (TP) - diagonal values
     TP = np.diag(confusion)
 
-    # Get the sum of each row (TP + FN) - actual instances
-    FN = np.sum(confusion, axis=1)
+    # Get False Positives (FP) - sum of each column minus TP
+    FP = np.sum(confusion, axis=0) - TP
 
-    # Get the sum of each column (TP + FP) - predicted instances
-    FP = np.sum(confusion, axis=0)
+    # Get False Negatives (FN) - sum of each row minus TP
+    FN = np.sum(confusion, axis=1) - TP
 
     # Compute True Negatives (TN)
-    TN = total - (FN + FP - TP)
+    TN = total - (TP + FP + FN)  # Corrected calculation
 
     # Compute Specificity
     specificity_values = TN / (TN + FP)
