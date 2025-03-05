@@ -1,57 +1,38 @@
 #!/usr/bin/env python3
 
 import numpy as np
-import tensorflow as tf
-import os
-import random
-
-# Set a consistent seed for reproducibility
-SEED = 0
-os.environ['PYTHONHASHSEED'] = str(SEED)
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-random.seed(SEED)
-np.random.seed(SEED)
-tf.random.set_seed(SEED)
-
-# Import the L2 regularization cost function
-l2_reg_cost = __import__('2-l2_reg_cost').l2_reg_cost
+dropout_forward_prop = __import__('4-dropout_forward_prop').dropout_forward_prop
 
 def one_hot(Y, classes):
-    """
-    Converts an array of labels into a one-hot encoded matrix.
-    
-    Parameters:
-    Y (np.ndarray): Array of labels.
-    classes (int): Total number of classes.
-    
-    Returns:
-    np.ndarray: One-hot encoded matrix.
-    """
+    """convert an array to a one-hot matrix"""
     m = Y.shape[0]
     oh = np.zeros((m, classes))
     oh[np.arange(m), Y] = 1
     return oh
 
-# Load the dataset and prepare the data
-m = 1500  # Use a fixed value for consistent testing
-c = 10
-lib = np.load('MNIST.npz')
+if __name__ == '__main__':
+    np.random.seed(0)
+    lib = np.load('MNIST.npz')
+    X_train_3D = lib['X_train']
+    Y_train = lib['Y_train']
 
-# Prepare input data and labels
-X = lib['X_train'][:m].reshape((m, -1))
-Y = one_hot(lib['Y_train'][:m], c)
+    # Ensure the input data is reshaped correctly
+    X_train = X_train_3D.reshape((X_train_3D.shape[0], -1)).T
+    Y_train_oh = one_hot(Y_train, 10).T
 
-# Load the pre-trained model with L2 regularization
-model_reg = tf.keras.models.load_model('model_reg.h5', compile=False)
+    # Check if the input data is not all zeros
+    print(f"Input Data (X_train) Sample: {X_train[:, :5]}")
 
-# Generate predictions using the model
-Predictions = model_reg(X)
+    weights = {}
+    weights['W1'] = np.random.randn(256, 784)
+    weights['b1'] = np.zeros((256, 1))
+    weights['W2'] = np.random.randn(128, 256)
+    weights['b2'] = np.zeros((128, 1))
+    weights['W3'] = np.random.randn(10, 128)
+    weights['b3'] = np.zeros((10, 1))
 
-# Calculate the base cost using categorical cross-entropy
-cost = tf.keras.losses.CategoricalCrossentropy()(Y, Predictions)
+    cache = dropout_forward_prop(X_train, weights, 3, 0.8)
 
-# Calculate the total cost with L2 regularization
-l2_cost = l2_reg_cost(cost, model_reg)
-
-# Output the final L2 regularized cost
-print(l2_cost)
+    # Print the outputs in the expected format
+    for key in sorted(cache.keys()):
+        print(f"{key} {cache[key]}")
