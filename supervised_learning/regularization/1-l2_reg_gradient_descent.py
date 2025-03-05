@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+Module for updating weights and biases of a neural network using
+gradient descent with L2 regularization.
+"""
+
 import numpy as np
 
 
@@ -8,15 +13,15 @@ def l2_reg_gradient_descent(Y, weights, cache, alpha, lambtha, L):
     with L2 regularization.
 
     Args:
-        Y: np.ndarray of shape (classes, m) with correct labels (one-hot).
-        weights: dict of weights and biases of the neural network.
-        cache: dict of outputs of each layer of the neural network.
-        alpha: learning rate.
-        lambtha: L2 regularization parameter.
-        L: number of layers in the network.
+        Y (np.ndarray): Shape (classes, m), one-hot labels.
+        weights (dict): Weights and biases of the neural network.
+        cache (dict): Outputs of each layer of the neural network.
+        alpha (float): Learning rate.
+        lambtha (float): L2 regularization parameter.
+        L (int): Number of layers in the network.
 
     Returns:
-        None. Updates weights and biases in place.
+        None: Updates weights and biases in place.
     """
     m = Y.shape[1]
     dz = cache["A" + str(L)] - Y
@@ -26,7 +31,7 @@ def l2_reg_gradient_descent(Y, weights, cache, alpha, lambtha, L):
         W = weights["W" + str(i)]
         b = weights["b" + str(i)]
 
-        # Compute gradients
+        # Compute gradients with L2 regularization
         dw = (np.matmul(dz, A_prev.T) / m) + (lambtha / m) * W
         db = np.sum(dz, axis=1, keepdims=True) / m
 
