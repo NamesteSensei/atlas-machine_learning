@@ -1,16 +1,27 @@
 #!/usr/bin/env python3
+"""
+Test file for l2_reg_gradient_descent function.
+Ensures the function updates weights and biases using gradient descent
+with L2 regularization.
+"""
 
 import numpy as np
-l2_reg_gradient_descent = __import__('1-l2_reg_gradient_descent').l2_reg_gradient_descent
-
+l2_reg_gradient_descent = __import__('1-l2_reg_gradient_descent')\
+    .l2_reg_gradient_descent
 
 def one_hot(Y, classes):
-    """Convert an array to a one-hot matrix."""
+    """
+    Converts an array of labels into a one-hot encoded matrix.
+    Args:
+        Y (np.ndarray): Array of shape (m,) with label indices.
+        classes (int): Number of classes.
+    Returns:
+        np.ndarray: One-hot encoded matrix of shape (classes, m).
+    """
     m = Y.shape[0]
     one_hot = np.zeros((classes, m))
     one_hot[Y, np.arange(m)] = 1
     return one_hot
-
 
 if __name__ == '__main__':
     lib = np.load('MNIST.npz')
@@ -21,7 +32,6 @@ if __name__ == '__main__':
 
     np.random.seed(0)
 
-    # Initialize weights and biases
     weights = {
         'W1': np.random.randn(256, 784),
         'b1': np.zeros((256, 1)),
@@ -31,7 +41,7 @@ if __name__ == '__main__':
         'b3': np.zeros((10, 1))
     }
 
-    # Forward propagation with tanh and softmax activations
+    # Initialize the cache dictionary properly
     cache = {}
     cache['A0'] = X_train
     cache['A1'] = np.tanh(np.matmul(weights['W1'], cache['A0']) + weights['b1'])
@@ -39,13 +49,6 @@ if __name__ == '__main__':
     Z3 = np.matmul(weights['W3'], cache['A2']) + weights['b3']
     cache['A3'] = np.exp(Z3) / np.sum(np.exp(Z3), axis=0)
 
-    # Display weights before update
-    print("Weights before update (W1):")
     print(weights['W1'])
-
-    # Perform gradient descent with L2 regularization
-    l2_reg_gradient_descent(Y_train_oh, weights, cache, alpha=0.1, lambtha=0.1, L=3)
-
-    # Display weights after update
-    print("\nWeights after update (W1):")
+    l2_reg_gradient_descent(Y_train_oh, weights, cache, 0.1, 0.1, 3)
     print(weights['W1'])
