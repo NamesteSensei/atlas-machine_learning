@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
+"""
+Module: 1-input
+Builds a neural network using the Keras Functional API with L2 regularization
+and dropout. This module defines the build_model function.
+"""
 
 import tensorflow.keras as K
-
 
 def build_model(nx, layers, activations, lambtha, keep_prob):
     """
@@ -9,13 +13,13 @@ def build_model(nx, layers, activations, lambtha, keep_prob):
 
     Parameters:
     - nx (int): Number of input features.
-    - layers (list): Number of nodes in each layer.
-    - activations (list): Activation functions for each layer.
+    - layers (list of int): Number of nodes in each layer.
+    - activations (list of str): Activation functions for each layer.
     - lambtha (float): L2 regularization parameter.
-    - keep_prob (float): Probability of keeping a node for dropout.
+    - keep_prob (float): Probability of keeping a node during dropout.
 
     Returns:
-    - Keras model
+    - keras.Model: The compiled Keras model.
     """
     inputs = K.Input(shape=(nx,))
     x = inputs
