@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds a Keras Sequential model."""
 
-import tensorflow as tf
+import tensorflow.keras as K
 
 
 def build_model(nx, layers, activations, lambtha, keep_prob):
@@ -16,22 +16,22 @@ def build_model(nx, layers, activations, lambtha, keep_prob):
     - keep_prob (float): Probability for dropout (1 - dropout rate).
 
     Returns:
-    - model (tf.keras.Sequential): The constructed model.
+    - model (K.Sequential): The constructed model.
     """
-    model = tf.keras.Sequential()
-    reg = tf.keras.regularizers.L2(lambtha)
+    model = K.Sequential()
+    reg = K.regularizers.L2(lambtha)
 
     for i, (nodes, activation) in enumerate(zip(layers, activations)):
         if i == 0:
-            model.add(tf.keras.layers.Dense(nodes,
-                                            activation=activation,
-                                            kernel_regularizer=reg,
-                                            input_shape=(nx,)))
+            model.add(K.layers.Dense(nodes,
+                                     activation=activation,
+                                     kernel_regularizer=reg,
+                                     input_shape=(nx,)))
         else:
-            model.add(tf.keras.layers.Dense(nodes,
-                                            activation=activation,
-                                            kernel_regularizer=reg))
+            model.add(K.layers.Dense(nodes,
+                                     activation=activation,
+                                     kernel_regularizer=reg))
         if i < len(layers) - 1:
-            model.add(tf.keras.layers.Dropout(1 - keep_prob))
+            model.add(K.layers.Dropout(1 - keep_prob))
 
     return model

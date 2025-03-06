@@ -1,15 +1,27 @@
 #!/usr/bin/env python3
-"""Test script for 0-sequential.py"""
+
+# Force Seed - fix for Keras
+SEED = 8
+
+import os
+os.environ['PYTHONHASHSEED'] = str(SEED)
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+
+import random
+random.seed(SEED)
 
 import numpy as np
+np.random.seed(SEED)
+
 import tensorflow as tf
-from 0-sequential import build_model
+tf.random.set_seed(SEED)
+
+# Use __import__ to load the module correctly
+build_model = __import__('0-sequential').build_model
 
 if __name__ == '__main__':
-    np.random.seed(0)
-    tf.random.set_seed(0)
-
-    model = build_model(784, [256, 128, 10],
-                        ['relu', 'relu', 'softmax'],
-                        0.01, 0.8)
-    model.summary()
+    network = build_model(784, [256, 256, 10],
+                          ['tanh', 'tanh', 'softmax'],
+                          0.001, 0.95)
+    network.summary()
+    print(network.losses)
