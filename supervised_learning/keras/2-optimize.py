@@ -11,10 +11,10 @@ def optimize_model(network, alpha, beta1, beta2):
     with categorical crossentropy loss and accuracy metrics.
 
     Args:
-        network: The Keras model to optimize.
-        alpha: The learning rate.
-        beta1: The first Adam optimization parameter.
-        beta2: The second Adam optimization parameter.
+        network (K.Model): The Keras model to optimize.
+        alpha (float): The learning rate.
+        beta1 (float): The first Adam optimization parameter.
+        beta2 (float): The second Adam optimization parameter.
 
     Returns:
         None
