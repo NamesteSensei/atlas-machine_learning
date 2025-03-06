@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Module: 1-input
 Builds a neural network using the Keras Functional API with L2 regularization
@@ -6,6 +7,7 @@ and dropout. This module defines the build_model function.
 """
 
 import tensorflow.keras as K
+
 
 def build_model(nx, layers, activations, lambtha, keep_prob):
     """
