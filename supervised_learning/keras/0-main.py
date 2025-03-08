@@ -1,45 +1,31 @@
 #!/usr/bin/env python3
 
 import numpy as np
-one_hot = __import__('3-one_hot').one_hot
-model = __import__('9-model')
-weights = __import__('10-weights')
+import tensorflow as tf
+from tensorflow import keras
+load_model = __import__('9-model').load_model
+save_weights = __import__('10-weights').save_weights
+load_weights = __import__('10-weights').load_weights
 
 if __name__ == '__main__':
-    # Correctly matching the expected input labels and number of classes
-    labels = np.array([
-        8, 0, 10, 11, 9, 10, 6, 0, 12, 7, 14, 17, 2, 2, 1, 5, 8, 14, 1, 10,
-        7, 11, 1, 15, 16, 5, 17, 14, 0, 0, 9, 5, 7, 5, 14, 1, 17, 1, 10, 7,
-        11, 4, 3, 16, 16, 0, 17, 11, 0, 13, 5, 16, 14, 8, 15, 3, 4, 16, 1, 17,
-        8, 2, 4, 9, 5, 7, 5, 14, 1, 17, 1, 10, 7, 11, 4, 3, 16, 16, 0, 17, 11,
-        0, 13, 5, 16, 14, 8, 15, 3, 4, 16, 1, 17, 8, 2, 4, 9, 5, 7
-    ])
-    classes = 18  # Total number of unique classes
-    one_hot_matrix = one_hot(labels, classes)
-    print(one_hot_matrix)
+    # Ensure reproducible results
+    np.random.seed(0)
+    tf.random.set_seed(0)
 
-    # Load the initial model
-    network = model.load_model('network1.keras')
+    # Load the model
+    model = load_model('network1.keras')
 
-    # Display weights before saving
-    print("Initial model weights:")
-    print(network.get_weights())
+    # Save the weights to a file
+    weights_file = './0-test.keras.weights.h5'
+    save_weights(model, weights_file)
 
-    # Save weights to a file
-    weights.save_weights(network, './0-test.keras.weights.h5')
-    print("Weights saved successfully to ./0-test.keras.weights.h5")
+    # Output expected success message
+    print(f'Weights saved successfully to {weights_file}')
 
-    # Load a new instance of the model
-    network2 = model.load_model('network1.keras')
+    # Create a new model and load the weights
+    model2 = load_model('network1.keras')
+    load_weights(model2, weights_file)
 
-    # Display weights before loading
-    print("New model weights before loading saved weights:")
-    print(network2.get_weights())
-
-    # Load the weights from the saved file
-    weights.load_weights(network2, './0-test.keras.weights.h5')
-    print("Weights loaded successfully from ./0-test.keras.weights.h5")
-
-    # Display weights after loading
-    print("New model weights after loading saved weights:")
-    print(network2.get_weights())
+    # Output the weights and biases of the first layer for verification
+    print(model2.get_weights()[0])
+    print(model2.get_weights()[1])
