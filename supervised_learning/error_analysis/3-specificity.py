@@ -8,7 +8,7 @@ import numpy as np
 
 def specificity(confusion):
     """
-    Calculates the specificity for each class in a confusion matrix.
+    Calculates the specificity for each class in a matrix.
 
     Parameters:
     - confusion: numpy.ndarray of shape (classes, classes)
