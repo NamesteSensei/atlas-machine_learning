@@ -36,4 +36,3 @@ def l2_reg_cost(cost, lambtha, weights, L, m):
 
     l2_cost = cost + (lambtha / (2 * m)) * l2_sum
     return l2_cost
-
