@@ -1,50 +1,44 @@
 #!/usr/bin/env python3
-"""
-0-determinant.py - Computes the determinant of a square matrix
-"""
-
-from typing import List
+"""Calculate the determinant of a square matrix."""
 
 
-def determinant(matrix: List[List[float]]) -> float:
+def determinant(matrix):
     """
-    Computes the determinant of a square matrix.
+    Calculates the determinant of a matrix.
 
     Args:
-        matrix: A list of lists representing a square matrix.
+        matrix (list of lists): A square matrix.
 
     Returns:
-        The determinant as a float or int.
+        int or float: Determinant of the matrix.
 
     Raises:
         TypeError: If input is not a list of lists.
-        ValueError: If the matrix is not square.
+        ValueError: If matrix is not square.
     """
-    # Check for list of lists
-    if not isinstance(matrix, list) or not all(isinstance(row, list) for row in matrix):
+    is_list = isinstance(matrix, list)
+    rows_are_lists = is_list and all(isinstance(r, list) for r in matrix)
+
+    if (not is_list) or (len(matrix) == 0) or (not rows_are_lists):
         raise TypeError("matrix must be a list of lists")
 
-    # Handle empty 0x0 matrix [[]]
+    # The empty 0x0 matrix is represented as [[]]
     if matrix == [[]]:
         return 1
 
-    # Check square shape
     n = len(matrix)
     if any(len(row) != n for row in matrix):
         raise ValueError("matrix must be a square matrix")
 
-    # Base case: 1x1 matrix
     if n == 1:
         return matrix[0][0]
 
-    # Base case: 2x2 matrix
     if n == 2:
         return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
 
-    # Recursive case: expand along first row
     det = 0
-    for j in range(n):
-        # Create submatrix excluding row 0 and column j
-        sub = [row[:j] + row[j+1:] for row in matrix[1:]]
-        det += ((-1) ** j) * matrix[0][j] * determinant(sub)
+    for col in range(n):
+        sub = [row[:col] + row[col + 1:] for row in matrix[1:]]
+        sign = -1 if (col % 2) else 1
+        det += sign * matrix[0][col] * determinant(sub)
     return det
