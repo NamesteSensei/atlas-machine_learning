@@ -1,0 +1,5 @@
+MNIST.npz
+model_reg.h5
+__pycache__/
+venv/
+venv39/
