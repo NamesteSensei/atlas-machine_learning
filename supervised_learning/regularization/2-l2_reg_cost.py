@@ -21,11 +21,14 @@ def l2_reg_cost(cost, model):
     Returns
     -------
     tf.Tensor
-        A tensor containing the total cost, including L2 losses
+        A tensor containing the total cost for each layer,
+        accounting for L2 regularization
     """
-    # model.losses contains all regularization losses
-    l2_loss = tf.add_n(model.losses)
+    # Collect all regularization losses
+    reg_losses = model.losses
 
-    # Add base cost + regularization losses
-    total_cost = cost + l2_loss
-    return total_cost
+    # Put cost first, then each reg loss
+    total_losses = [cost] + reg_losses
+
+    # Return as a tensor
+    return tf.convert_to_tensor(total_losses)
