@@ -6,6 +6,7 @@ matrix of a multivariate dataset without using numpy.cov.
 
 import numpy as np
 
+
 def mean_cov(X):
     """
     Calculates the mean and covariance of a data set.
