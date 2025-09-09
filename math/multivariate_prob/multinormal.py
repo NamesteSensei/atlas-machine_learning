@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MultiNormal: multivariate normal distribution.
+MultiNormal: multivariate normal distribution with PDF evaluation.
 """
 
 import numpy as np
@@ -49,3 +49,41 @@ class MultiNormal:
         # Covariance matrix (d, d)
         data_centered = data - self.mean
         self.cov = (data_centered @ data_centered.T) / (n - 1)
+
+    def pdf(self, x):
+        """
+        Calculate the PDF at a given data point.
+
+        Parameters
+        ----------
+        x : numpy.ndarray
+            Array of shape (d, 1) representing a data point.
+
+        Returns
+        -------
+        float
+            The value of the PDF at point x.
+
+        Raises
+        ------
+        TypeError
+            If x is not a numpy.ndarray.
+        ValueError
+            If x does not have shape (d, 1).
+        """
+        if not isinstance(x, np.ndarray):
+            raise TypeError("x must be a numpy.ndarray")
+
+        d = self.mean.shape[0]
+        if x.shape != (d, 1):
+            raise ValueError(f"x must have the shape ({d}, 1)")
+
+        # Compute PDF using multivariate Gaussian formula
+        det_cov = np.linalg.det(self.cov)
+        inv_cov = np.linalg.inv(self.cov)
+
+        norm_const = 1.0 / np.sqrt(((2 * np.pi) ** d) * det_cov)
+        diff = x - self.mean
+        exponent = -0.5 * (diff.T @ inv_cov @ diff)
+
+        return float(norm_const * np.exp(exponent))
