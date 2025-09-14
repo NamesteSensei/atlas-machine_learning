@@ -12,25 +12,25 @@ def dropout_gradient_descent(Y, weights, cache, alpha, keep_prob, L):
     using gradient descent.
     """
     m = Y.shape[1]
-    dZ = cache[f"A{L}"] - Y  # softmax derivative
+    dZ = cache[f"A{L}"] - Y  # derivative for softmax output
 
     for layer in range(L, 0, -1):
         A_prev = cache[f"A{layer-1}"]
         W = weights[f"W{layer}"]
 
-        # Gradients
+        # Gradient for weights and biases
         dW = (1 / m) * np.matmul(dZ, A_prev.T)
         db = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
 
-        # Update params in place
+        # Update in place
         weights[f"W{layer}"] -= alpha * dW
         weights[f"b{layer}"] -= alpha * db
 
         if layer > 1:
-            # Backpropagate to previous layer
+            # Backpropagate error to previous layer
             dA = np.matmul(W.T, dZ)
 
-            # Apply dropout mask and scale
+            # Apply dropout mask & rescale
             dA *= cache[f"D{layer-1}"]
             dA /= keep_prob
 
