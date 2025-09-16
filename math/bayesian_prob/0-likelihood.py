@@ -45,4 +45,6 @@ def likelihood(x, n, P):
 
     coefficient = np.math.comb(n, x)
     result = coefficient * (P ** x) * ((1 - P) ** (n - x))
-    return np.array(result)
+
+    # Ensure return type is always a numpy.ndarray
+    return np.asarray(result)
