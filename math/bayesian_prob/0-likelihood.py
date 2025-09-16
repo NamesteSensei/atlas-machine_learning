@@ -44,4 +44,5 @@ def likelihood(x, n, P):
         raise ValueError("All values in P must be in the range [0, 1]")
 
     coefficient = np.math.comb(n, x)
-    return coefficient * (P ** x) * ((1 - P) ** (n - x))
+    result = coefficient * (P ** x) * ((1 - P) ** (n - x))
+    return np.array(result)
