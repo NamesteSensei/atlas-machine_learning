@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import numpy as np
-from scipy.special import comb
+from scipy.special
 
 
 def marginal(x, n, P, Pr):
@@ -29,3 +29,4 @@ def marginal(x, n, P, Pr):
     marginal_prob = np.sum(likelihoods * Pr)
 
     return marginal_prob
+
