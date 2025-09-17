@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+"""
+Module that calculates the marginal probability of observing
+x patients with severe side effects out of n total patients,
+based on a prior distribution over hypothetical probabilities.
+
+Only uses numpy, and implements binomial coefficient manually.
+"""
+
 import numpy as np
 
 
@@ -38,7 +46,6 @@ def marginal(x, n, P, Pr):
     TypeError: If P is not a 1D numpy.ndarray
         or Pr does not have the same shape as P
     """
-
     # === Input validation (strict order) ===
     if not isinstance(n, int) or n <= 0:
         raise ValueError("n must be a positive integer")
@@ -58,7 +65,6 @@ def marginal(x, n, P, Pr):
     if not np.isclose(np.sum(Pr), 1):
         raise ValueError("Pr must sum to 1")
 
-    # === Manual binomial coefficient ===
     def factorial(k):
         """Compute factorial of k (k!) using iterative approach."""
         if k == 0 or k == 1:
@@ -72,7 +78,6 @@ def marginal(x, n, P, Pr):
         """Compute binomial coefficient (n choose k)."""
         return factorial(n) / (factorial(k) * factorial(n - k))
 
-    # === Likelihood and marginal computation ===
     likelihood = binom_coeff(n, x) * (P ** x) * ((1 - P) ** (n - x))
     marginal_prob = np.sum(likelihood * Pr)
 
