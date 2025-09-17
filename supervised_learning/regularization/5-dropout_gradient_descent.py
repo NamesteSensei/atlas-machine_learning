@@ -27,25 +27,25 @@ def dropout_gradient_descent(Y, weights, cache, alpha, keep_prob, L):
         Number of layers in the network.
     """
     m = Y.shape[1]
-    dZ = cache[f"A{L}"] - Y   # derivative at output (softmax + cross-entropy)
+    dZ = cache[f"A{L}"] - Y   # output error (softmax + cross-entropy)
 
     for l in reversed(range(1, L + 1)):
         A_prev = cache[f"A{l-1}"]
-        W = weights[f"W{l}"]
+        W_curr = weights[f"W{l}"]  # keep original for backprop
 
-        # compute gradients
+        # gradients
         dW = (1 / m) * np.matmul(dZ, A_prev.T)
         db = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
 
-        # update parameters
-        weights[f"W{l}"] = W - alpha * dW
+        # update weights in place
+        weights[f"W{l}"] = W_curr - alpha * dW
         weights[f"b{l}"] = weights[f"b{l}"] - alpha * db
 
         if l > 1:
-            # propagate error backwards through tanh
-            dA_prev = np.matmul(W.T, dZ)
+            # backpropagate error through tanh
+            dA_prev = np.matmul(W_curr.T, dZ)
             dZ = dA_prev * (1 - (A_prev ** 2))
 
-            # apply dropout mask
+            # apply dropout scaling
             D_prev = cache[f"D{l-1}"]
             dZ = dZ * D_prev / keep_prob
