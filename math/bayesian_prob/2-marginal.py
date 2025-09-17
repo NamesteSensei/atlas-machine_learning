@@ -4,18 +4,41 @@ import numpy as np
 
 def marginal(x, n, P, Pr):
     """
-    Calculates the marginal probability of obtaining the data x and n
-    using the law of total probability over the hypothesis space P
+    Calculates the marginal probability of observing `x` patients
+    with severe side effects out of `n` total patients, given
+    a prior distribution over possible probabilities in `P`.
+
+    Marginal probability is computed using the law of total probability:
+        marginal = sum(Pr[i] * P(X=x | P[i])) for all i
 
     Parameters:
-    - x: number of patients with severe side effects
-    - n: total number of patients observed
-    - P: 1D numpy.ndarray of hypothetical probabilities
-    - Pr: 1D numpy.ndarray of prior beliefs about P
+    ----------
+    x : int
+        Number of patients with severe side effects
+    n : int
+        Total number of patients observed
+    P : numpy.ndarray
+        1D array of hypothetical probabilities of side effects
+    Pr : numpy.ndarray
+        1D array of prior beliefs (same shape as P), must sum to 1
 
     Returns:
-    - marginal probability (float)
+    -------
+    float
+        Marginal probability of observing the given data
+
+    Raises:
+    ------
+    ValueError: If any of the following are violated:
+        - n is not a positive integer
+        - x is not a non-negative integer
+        - x > n
+        - values in P or Pr not in [0, 1]
+        - Pr does not sum to 1
+    TypeError: If P is not a 1D numpy.ndarray
+        or Pr does not have the same shape as P
     """
+
     # === Input validation (strict order) ===
     if not isinstance(n, int) or n <= 0:
         raise ValueError("n must be a positive integer")
@@ -35,9 +58,9 @@ def marginal(x, n, P, Pr):
     if not np.isclose(np.sum(Pr), 1):
         raise ValueError("Pr must sum to 1")
 
-    # === Binomial coefficient without scipy ===
+    # === Manual binomial coefficient ===
     def factorial(k):
-        """Simple factorial implementation"""
+        """Compute factorial of k (k!) using iterative approach."""
         if k == 0 or k == 1:
             return 1
         result = 1
@@ -46,9 +69,10 @@ def marginal(x, n, P, Pr):
         return result
 
     def binom_coeff(n, k):
-        """Compute n choose k"""
+        """Compute binomial coefficient (n choose k)."""
         return factorial(n) / (factorial(k) * factorial(n - k))
 
+    # === Likelihood and marginal computation ===
     likelihood = binom_coeff(n, x) * (P ** x) * ((1 - P) ** (n - x))
     marginal_prob = np.sum(likelihood * Pr)
 
