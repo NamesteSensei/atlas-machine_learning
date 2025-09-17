@@ -1,45 +1,63 @@
 #!/usr/bin/env python3
 """
-Module that calculates the intersection of data with
-hypothetical probabilities using priors.
+Module to compute the intersection (likelihood) of observing
+x patients with side effects out of n total patients for each
+hypothetical probability in P.
+
+Implements binomial likelihood manually using numpy only.
 """
+
 import numpy as np
-likelihood = __import__('0-likelihood').likelihood
 
 
-def intersection(x, n, P, Pr):
+def intersection(x, n, P):
     """
-    Calculate intersection of data with priors.
+    Calculates the likelihood of observing `x` severe side effects
+    out of `n` patients for each hypothetical probability in P.
 
-    Args:
-        x (int): patients with side effects
-        n (int): total patients
-        P (np.ndarray): probabilities
-        Pr (np.ndarray): prior beliefs
+    Parameters:
+    ----------
+    x : int
+        Number of patients with severe side effects
+    n : int
+        Total number of patients observed
+    P : numpy.ndarray
+        1D array of hypothetical probabilities of side effects
 
     Returns:
-        np.ndarray: intersection values
+    -------
+    numpy.ndarray
+        1D array of likelihood values corresponding to each P
+
+    Raises:
+    ------
+    ValueError: For invalid n, x, or values in P
+    TypeError: If P is not a 1D numpy.ndarray
     """
     if not isinstance(n, int) or n <= 0:
         raise ValueError("n must be a positive integer")
     if not isinstance(x, int) or x < 0:
-        raise ValueError("x must be an integer that is "
-                         "greater than or equal to 0")
+        raise ValueError(
+            "x must be an integer that is greater than or equal to 0")
     if x > n:
         raise ValueError("x cannot be greater than n")
     if not isinstance(P, np.ndarray) or P.ndim != 1:
         raise TypeError("P must be a 1D numpy.ndarray")
-    if not isinstance(Pr, np.ndarray) or Pr.shape != P.shape:
-        raise TypeError("Pr must be a numpy.ndarray with the "
-                        "same shape as P")
     if np.any((P < 0) | (P > 1)):
-        raise ValueError("All values in P must be in the "
-                         "range [0, 1]")
-    if np.any((Pr < 0) | (Pr > 1)):
-        raise ValueError("All values in Pr must be in the "
-                         "range [0, 1]")
-    if not np.isclose(np.sum(Pr), 1):
-        raise ValueError("Pr must sum to 1")
+        raise ValueError("All values in P must be in the range [0, 1]")
 
-    like = likelihood(x, n, P)
-    return like * Pr
+    def factorial(k):
+        """Iterative factorial"""
+        if k == 0 or k == 1:
+            return 1
+        result = 1
+        for i in range(2, k + 1):
+            result *= i
+        return result
+
+    def binom_coeff(n, k):
+        """Binomial coefficient n choose k"""
+        return factorial(n) / (factorial(k) * factorial(n - k))
+
+    likelihood = binom_coeff(n, x) * (P ** x) * ((1 - P) ** (n - x))
+    return likelihood
