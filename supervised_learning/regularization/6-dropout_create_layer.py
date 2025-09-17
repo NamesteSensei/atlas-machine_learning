@@ -17,7 +17,7 @@ def dropout_create_layer(prev, n, activation, keep_prob, training=True):
     n : int
         Number of nodes in the new layer.
     activation : function
-        Activation function to use (e.g., tf.nn.tanh).
+        Activation function (e.g., tf.nn.tanh).
     keep_prob : float
         Probability of keeping a node during dropout.
     training : bool, optional
@@ -28,11 +28,13 @@ def dropout_create_layer(prev, n, activation, keep_prob, training=True):
     tf.Tensor
         Output of the new layer with dropout applied if training.
     """
-    initializer = tf.keras.initializers.VarianceScaling(scale=2.0, mode="fan_avg")
+    initializer = tf.keras.initializers.VarianceScaling(
+        scale=2.0, mode="fan_avg"
+    )
 
-    dense = tf.keras.layers.Dense(units=n,
-                                  activation=activation,
-                                  kernel_initializer=initializer)
+    dense = tf.keras.layers.Dense(
+        units=n, activation=activation, kernel_initializer=initializer
+    )
 
     output = dense(prev)
 
