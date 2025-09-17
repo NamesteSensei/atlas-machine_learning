@@ -3,12 +3,10 @@
 Module to calculate the posterior probability distribution
 over hypothetical probabilities P using Bayes' Theorem.
 
-Reuses intersection() and marginal() from previous modules.
+This is a self-contained version. Uses numpy only.
 """
 
 import numpy as np
-intersection = __import__('1-intersection').intersection
-marginal = __import__('2-marginal').marginal
 
 
 def posterior(x, n, P, Pr):
@@ -58,10 +56,25 @@ def posterior(x, n, P, Pr):
     if not np.isclose(np.sum(Pr), 1):
         raise ValueError("Pr must sum to 1")
 
-    # Calculate intersection and marginal
-    joint_probs = intersection(x, n, P, Pr)
-    marginal_prob = marginal(x, n, P, Pr)
+    def factorial(k):
+        """Compute factorial iteratively."""
+        if k == 0 or k == 1:
+            return 1
+        result = 1
+        for i in range(2, k + 1):
+            result *= i
+        return result
 
-    # Bayes' Theorem
-    posteriors = joint_probs / marginal_prob
-    return posteriors
+    def binom_coeff(n, k):
+        """Compute binomial coefficient (n choose k)."""
+        return factorial(n) / (factorial(k) * factorial(n - k))
+
+    # Likelihood * Prior = Joint
+    likelihood = binom_coeff(n, x) * (P ** x) * ((1 - P) ** (n - x))
+    joint = likelihood * Pr
+
+    # Marginal = sum of joint
+    marginal = np.sum(joint)
+
+    # Posterior = joint / marginal
+    return joint / marginal
