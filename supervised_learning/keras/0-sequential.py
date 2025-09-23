@@ -34,7 +34,7 @@ def build_model(nx, layers, activations, lambtha, keep_prob):
     """
     model = K.Sequential(name="sequential")
 
-    # First layer with input_dim
+    # First Dense layer
     model.add(K.layers.Dense(
         units=layers[0],
         activation=activations[0],
@@ -42,7 +42,11 @@ def build_model(nx, layers, activations, lambtha, keep_prob):
         input_dim=nx
     ))
 
-    # Add remaining layers
+    # Add Dropout after first Dense
+    if len(layers) > 1:
+        model.add(K.layers.Dropout(rate=1 - keep_prob))
+
+    # Remaining layers
     for i in range(1, len(layers)):
         model.add(K.layers.Dense(
             units=layers[i],
@@ -50,7 +54,7 @@ def build_model(nx, layers, activations, lambtha, keep_prob):
             kernel_regularizer=K.regularizers.l2(lambtha)
         ))
 
-        # Add Dropout after each Dense except the last
+        # Dropout after every Dense except the last
         if i != len(layers) - 1:
             model.add(K.layers.Dropout(rate=1 - keep_prob))
 
