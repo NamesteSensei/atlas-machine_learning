@@ -1,25 +1,22 @@
 #!/usr/bin/env python3
 """
 13-predict.py
-Make predictions with a trained Keras model.
+Make a prediction using a trained Keras model
 """
+
+import tensorflow.keras as K
+
 
 def predict(network, data, verbose=False):
     """
-    Makes a prediction using a neural network.
+    Uses a Keras model to make predictions.
 
-    Parameters
-    ----------
-    network : K.Model
-        The network model to make the prediction with.
-    data : np.ndarray
-        Input data to make the prediction with.
-    verbose : bool, optional
-        Determines if output should be printed during prediction.
+    Args:
+        network: trained Keras model
+        data: input data to predict
+        verbose: bool, whether to print output during prediction
 
-    Returns
-    -------
-    np.ndarray
-        The prediction for the data.
+    Returns:
+        The model’s prediction on the data
     """
     return network.predict(data, verbose=verbose)
