@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-10-train.py
+10-weights.py
 -----------
 Trains a Keras model using mini-batch gradient descent,
 with validation, early stopping, learning rate decay,
