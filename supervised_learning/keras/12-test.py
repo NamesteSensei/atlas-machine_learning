@@ -1,27 +1,23 @@
 #!/usr/bin/env python3
 """
 12-test.py
-Test a trained Keras model.
+Test a trained neural network model
 """
+
+import tensorflow.keras as K
+
 
 def test_model(network, data, labels, verbose=True):
     """
-    Tests a neural network.
+    Tests a Keras model.
 
-    Parameters
-    ----------
-    network : K.Model
-        The network model to test.
-    data : np.ndarray
-        Input data to test the model with.
-    labels : np.ndarray
-        Correct one-hot labels of data.
-    verbose : bool, optional
-        Determines if output should be printed during testing.
+    Args:
+        network: compiled Keras model to evaluate
+        data: input data to test the model with
+        labels: correct one-hot encoded labels of the data
+        verbose: bool, if True, output will be printed during evaluation
 
-    Returns
-    -------
-    list
-        [loss, accuracy] of the model with the testing data.
+    Returns:
+        A list [loss, accuracy] of the model on the test data
     """
     return network.evaluate(data, labels, verbose=verbose)
