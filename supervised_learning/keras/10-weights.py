@@ -1,111 +1,42 @@
 #!/usr/bin/env python3
-"""
-10-weights.py
------------
-Trains a Keras model using mini-batch gradient descent,
-with validation, early stopping, learning rate decay,
-saving the best model, and checkpoint saving after every epoch.
-"""
+"""Module to save and load weights for a Keras model."""
 
-import tensorflow.keras as K
+import tensorflow.keras as K  # noqa: F401
 
 
-def train_model(network, data, labels, batch_size, epochs,
-                validation_data=None, early_stopping=False,
-                patience=0, learning_rate_decay=False,
-                alpha=0.1, decay_rate=1,
-                save_best=False, filepath=None,
-                save_checkpoint=False, checkpoint_path=None,
-                verbose=True, shuffle=False):
+def save_weights(network, filename, save_format='keras'):
     """
-    Trains a model using mini-batch gradient descent.
+    Save the weights of a Keras model.
 
     Parameters
     ----------
     network : K.Model
-        The Keras model to train.
-    data : np.ndarray
-        Input data of shape (m, nx).
-    labels : np.ndarray
-        One-hot labels of shape (m, classes).
-    batch_size : int
-        Size of each mini-batch.
-    epochs : int
-        Number of passes through the dataset.
-    validation_data : tuple, optional
-        Data to validate the model with (X_valid, Y_valid).
-    early_stopping : bool, optional
-        If True and validation_data is provided, enable early stopping.
-    patience : int, optional
-        Number of epochs to wait after no improvement before stopping.
-    learning_rate_decay : bool, optional
-        If True and validation_data is provided, enable learning rate decay.
-    alpha : float, optional
-        Initial learning rate.
-    decay_rate : float, optional
-        Decay rate for inverse time decay schedule.
-    save_best : bool, optional
-        If True and validation_data is provided, save best model.
-    filepath : str, optional
-        Path where the best model should be saved.
-    save_checkpoint : bool, optional
-        If True, save weights after every epoch.
-    checkpoint_path : str, optional
-        Filepath (with formatting options) for checkpoint weights.
-        Example: "checkpoints/weights.{epoch:02d}.h5"
-    verbose : bool, optional
-        If True, print training progress.
-    shuffle : bool, optional
-        If True, shuffle the dataset before each epoch.
+        The model whose weights should be saved.
+    filename : str
+        The path of the file where the weights should be saved.
+    save_format : str, optional
+        Format to use when saving ('keras' or 'h5'), by default 'keras'.
 
     Returns
     -------
-    History : keras.callbacks.History
-        The History object generated after training.
+    None
     """
-    callbacks = []
+    network.save_weights(filename, save_format=save_format)
 
-    # Early Stopping
-    if early_stopping and validation_data is not None:
-        early_stop = K.callbacks.EarlyStopping(
-            monitor='val_loss',
-            patience=patience
-        )
-        callbacks.append(early_stop)
 
-    # Learning Rate Decay
-    if learning_rate_decay and validation_data is not None:
-        def scheduler(epoch):
-            return alpha / (1 + decay_rate * epoch)
+def load_weights(network, filename):
+    """
+    Load weights into a Keras model.
 
-        lr_decay = K.callbacks.LearningRateScheduler(scheduler, verbose=1)
-        callbacks.append(lr_decay)
+    Parameters
+    ----------
+    network : K.Model
+        The model that should have its weights loaded.
+    filename : str
+        The path of the file containing the weights.
 
-    # Save Best Model
-    if save_best and validation_data is not None and filepath is not None:
-        checkpoint_best = K.callbacks.ModelCheckpoint(
-            filepath=filepath,
-            monitor='val_loss',
-            save_best_only=True
-        )
-        callbacks.append(checkpoint_best)
-
-    # Save Checkpoints After Every Epoch
-    if save_checkpoint and checkpoint_path is not None:
-        checkpoint_all = K.callbacks.ModelCheckpoint(
-            filepath=checkpoint_path,
-            save_weights_only=True,
-            save_freq='epoch'
-        )
-        callbacks.append(checkpoint_all)
-
-    return network.fit(
-        x=data,
-        y=labels,
-        batch_size=batch_size,
-        epochs=epochs,
-        validation_data=validation_data,
-        verbose=verbose,
-        shuffle=shuffle,
-        callbacks=callbacks
-    )
+    Returns
+    -------
+    None
+    """
+    network.load_weights(filename)
