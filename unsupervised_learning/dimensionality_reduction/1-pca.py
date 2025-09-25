@@ -1,18 +1,26 @@
 #!/usr/bin/env python3
 import numpy as np
 
+
 def pca(X, ndim):
     """
-    Performs PCA on a dataset to reduce to a specified number of dimensions.
+    Performs PCA on a dataset to reduce it to a given number of dimensions.
 
     Parameters:
-    - X: np.ndarray of shape (n, d)
-    - ndim: int, number of dimensions to keep
+    - X: np.ndarray of shape (n, d), the dataset
+    - ndim: int, the target number of dimensions
 
     Returns:
-    - T: np.ndarray of shape (n, ndim), transformed data
+    - T: np.ndarray of shape (n, ndim), the transformed dataset
     """
-    X_centered = X - np.mean(X, axis=0)
-    U, S, Vt = np.linalg.svd(X_centered, full_matrices=False)
+    # Center the data
+    X_mean = X - np.mean(X, axis=0)
+
+    # Perform SVD
+    U, S, Vt = np.linalg.svd(X_mean, full_matrices=False)
+
+    # Project the data onto the top ndim principal components
     W = Vt[:ndim].T
-    return np.matmul(X_centered, W)
+    T = np.matmul(X_mean, W)
+
+    return T
