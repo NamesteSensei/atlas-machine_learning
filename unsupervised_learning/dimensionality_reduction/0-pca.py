@@ -8,26 +8,27 @@ import numpy as np
 
 def pca(X, var=0.95):
     """
-    Performs PCA on a dataset to maintain a given variance fraction.
+    Performs PCA on a dataset.
 
     Parameters:
-    - X: np.ndarray of shape (n, d), zero-mean data
-    - var: float, the fraction of variance to retain
+    - X: np.ndarray of shape (n, d), dataset with mean already removed
+    - var: float, the fraction of variance to preserve (default 0.95)
 
     Returns:
-    - W: np.ndarray of shape (d, nd), the weights matrix for projection
+    - W: np.ndarray of shape (d, nd), the weights matrix that maintains
+         `var` fraction of X's variance
     """
-    # Perform SVD
+    # Compute SVD
     U, S, Vt = np.linalg.svd(X, full_matrices=False)
 
-    # Compute variance explained
-    variance_explained = (S ** 2) / np.sum(S ** 2)
-    cumulative_variance = np.cumsum(variance_explained)
+    # Variance explained by each singular value
+    explained_variance = (S ** 2) / np.sum(S ** 2)
+    cumulative_variance = np.cumsum(explained_variance)
 
-    # Find number of components to retain var amount of variance
-    nd = np.searchsorted(cumulative_variance, var) + 1
+    # Minimum number of components that reach the target variance
+    nd = np.where(cumulative_variance >= var)[0][0] + 1
 
-    # Get the top nd principal components (columns)
-    W = Vt[:nd].T  # shape (d, nd)
+    # Weight matrix (principal components as columns)
+    W = Vt[:nd].T
 
     return W
