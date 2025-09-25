@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+This module performs Principal Component Analysis (PCA)
+for reducing the dimensionality of datasets using SVD.
+"""
+
 import numpy as np
 
 
