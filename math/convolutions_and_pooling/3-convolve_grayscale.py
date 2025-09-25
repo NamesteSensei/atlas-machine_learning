@@ -10,8 +10,8 @@ def convolve_grayscale(images, kernel, padding='same', stride=(1, 1)):
     Parameters:
     - images: numpy.ndarray of shape (m, h, w)
     - kernel: numpy.ndarray of shape (kh, kw)
-    - padding: either 'same', 'valid', or a tuple of (ph, pw)
-    - stride: tuple of (sh, sw)
+    - padding: 'same', 'valid', or (ph, pw)
+    - stride: tuple (sh, sw)
 
     Returns:
     - numpy.ndarray containing the convolved images
@@ -24,12 +24,12 @@ def convolve_grayscale(images, kernel, padding='same', stride=(1, 1)):
     if isinstance(padding, tuple):
         ph, pw = padding
     elif padding == 'same':
-        ph = ((h - 1) * sh + kh - h) // 2
-        pw = ((w - 1) * sw + kw - w) // 2
+        ph = int(np.ceil(((h - 1) * sh + kh - h) / 2))
+        pw = int(np.ceil(((w - 1) * sw + kw - w) / 2))
     elif padding == 'valid':
         ph, pw = 0, 0
     else:
-        raise ValueError("padding must be 'same', 'valid', or a (ph, pw) tuple")
+        raise ValueError("padding must be 'same', 'valid', or (ph, pw)")
 
     # Pad images
     padded_images = np.pad(
@@ -39,12 +39,12 @@ def convolve_grayscale(images, kernel, padding='same', stride=(1, 1)):
         constant_values=0
     )
 
-    # Compute output shape
-    out_h = ((h + 2 * ph - kh) // sh) + 1
-    out_w = ((w + 2 * pw - kw) // sw) + 1
+    # Output shape
+    out_h = (h + 2 * ph - kh) // sh + 1
+    out_w = (w + 2 * pw - kw) // sw + 1
     output = np.zeros((m, out_h, out_w))
 
-    # Convolution loops
+    # Convolution
     for i in range(out_h):
         for j in range(out_w):
             img_slice = padded_images[:, i*sh:i*sh+kh, j*sw:j*sw+kw]
