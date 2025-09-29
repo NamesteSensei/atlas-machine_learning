@@ -38,7 +38,7 @@ def kmeans(X, k, iterations=1000):
         return None, None
 
     for _ in range(iterations):
-        # Step 2: Assign each point to nearest centroid
+        # Step 2: Assign points to nearest centroid
         dist = np.linalg.norm(X[:, None, :] - C[None, :, :], axis=2)
         clss = np.argmin(dist, axis=1)
 
@@ -51,7 +51,7 @@ def kmeans(X, k, iterations=1000):
 
         # Step 4: Check convergence
         if np.allclose(C, new_C):
-            break
+            return C, clss
         C = new_C
 
     return C, clss
