@@ -25,15 +25,18 @@ def variance(X, C):
         If inputs are invalid.
     """
     # ---- Validation ----
-    if (not isinstance(X, np.ndarray) or X.ndim != 2 or X.size == 0 or
-            not isinstance(C, np.ndarray) or C.ndim != 2 or C.shape[1] != X.shape[1]):
+    if (not isinstance(X, np.ndarray) or X.ndim != 2 or X.size == 0):
+        return None
+    if (not isinstance(C, np.ndarray) or C.ndim != 2 or
+            C.shape[1] != X.shape[1] or C.size == 0):
         return None
 
     # ---- Compute squared distances (n, k) ----
+    # Broadcasting: expand X and C to compare all points vs. all centroids
     diffs = X[:, None, :] - C[None, :, :]
     dists = np.sum(diffs ** 2, axis=2)
 
     # ---- Take min distance for each point, sum them ----
-    var = np.sum(np.min(dists, axis=1))
+    var = float(np.sum(np.min(dists, axis=1)))
 
     return var
