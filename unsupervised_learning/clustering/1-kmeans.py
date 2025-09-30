@@ -1,43 +1,43 @@
 #!/usr/bin/env python3
-"""K-means clustering algorithm"""
+"""
+K-means clustering algorithm implementation.
+"""
 
 import numpy as np
+initialize = __import__('0-initialize').initialize
 
 
 def kmeans(X, k, iterations=1000):
-    """Performs K-means on a dataset"""
-    if (not isinstance(X, np.ndarray) or len(X.shape) != 2 or
-            not isinstance(k, int) or k <= 0 or
-            not isinstance(iterations, int) or iterations <= 0):
+    """
+    Performs K-means on a dataset.
+
+    Parameters:
+    - X (np.ndarray): shape (n, d), data points
+    - k (int): number of clusters
+    - iterations (int): max number of iterations
+
+    Returns:
+    - C (np.ndarray): shape (k, d), final centroids
+    - clss (np.ndarray): shape (n,), index of cluster for each point
+    """
+    if (type(X) is not np.ndarray or len(X.shape) != 2 or
+            type(k) is not int or k <= 0 or
+            type(iterations) is not int or iterations <= 0):
         return None, None
 
-    n, d = X.shape
-    min_vals = np.min(X, axis=0)
-    max_vals = np.max(X, axis=0)
-
-    # Random initialization of centroids within the data range
-    C = np.random.uniform(low=min_vals, high=max_vals, size=(k, d))
-
+    C = initialize(X, k)  # initialize centroids
     for _ in range(iterations):
-        # Assign points to nearest centroid
+        # compute distances (n x k)
         distances = np.linalg.norm(X[:, np.newaxis] - C, axis=2)
         clss = np.argmin(distances, axis=1)
 
-        C_new = np.copy(C)
+        # update centroids
+        new_C = np.array([X[clss == i].mean(axis=0) if np.any(clss == i)
+                          else initialize(X, 1) for i in range(k)])
 
-        for i in range(k):
-            cluster_points = X[clss == i]
-            if cluster_points.size == 0:
-                # Reinitialize to random point from dataset
-                idx = np.random.randint(0, n)
-                C_new[i] = X[idx]
-            else:
-                C_new[i] = np.mean(cluster_points, axis=0)
-
-        # Stop if centroids converge
-        if np.allclose(C, C_new):
+        # stop if converged
+        if np.allclose(C, new_C):
             break
-
-        C = C_new
+        C = new_C
 
     return C, clss
