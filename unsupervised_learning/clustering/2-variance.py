@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+This module provides a function to calculate the total intra-cluster
+variance for a dataset given its centroids.
+"""
+
 import numpy as np
 
 
@@ -29,3 +34,4 @@ def variance(X, C):
     dists = np.sum(diffs * diffs, axis=2)
 
     return np.sum(np.min(dists, axis=1))
+
