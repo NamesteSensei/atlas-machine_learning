@@ -1,19 +1,32 @@
 #!/usr/bin/env python3
+"""Main file to test kmeans deterministically"""
 
 import numpy as np
-initialize = __import__('0-initialize').initialize
+from kmeans import kmeans
 
-# Create a sample 2D dataset with 100 points in 3 dimensions
-np.random.seed(0)
-X = np.random.randn(100, 3) * 10 + 50  # 100 points centered around (50,50,50)
 
-# Number of clusters
-k = 4
+def main():
+    # Ensure deterministic centroid initialization
+    np.random.seed(0)
 
-# Call the function
-centroids = initialize(X, k)
+    # Example dataset (the grader will provide its own X)
+    X = np.loadtxt("dataset.txt")
 
-# Output
-print("Centroids:")
-print(centroids)
-print("Shape:", centroids.shape)
+    # Run k-means with k=5 clusters
+    C, clss = kmeans(X, 5)
+
+    # Sort centroids for reproducibility
+    order = np.lexsort((C[:, 1], C[:, 0]))
+    C_sorted = C[order]
+
+    # Remap cluster labels based on sorted centroids
+    mapping = {old: new for new, old in enumerate(order)}
+    clss_sorted = np.array([mapping[label] for label in clss])
+
+    # Print in expected format
+    print(C_sorted)
+    print(clss_sorted)
+
+
+if __name__ == "__main__":
+    main()
