@@ -34,4 +34,3 @@ def variance(X, C):
     dists = np.sum(diffs * diffs, axis=2)
 
     return np.sum(np.min(dists, axis=1))
-
