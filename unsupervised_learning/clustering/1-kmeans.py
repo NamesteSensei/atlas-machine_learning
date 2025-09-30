@@ -44,8 +44,8 @@ def kmeans(X, k, iterations=1000):
         for i in range(k):
             if np.any(clss == i):
                 new_C[i] = X[clss == i].mean(axis=0)
-            else:  # reinitialize empty cluster
-                new_C[i] = np.random.uniform(low=min_vals, high=max_vals)
+            else:  # reinitialize empty cluster from data
+                new_C[i] = X[np.random.randint(0, n)]
 
         # Early stopping if converged
         if np.allclose(C, new_C):
