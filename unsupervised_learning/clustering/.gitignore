@@ -1,1 +1,4 @@
 clustering_env/
+clustering_env/
+__pycache__/
+*.pyc
