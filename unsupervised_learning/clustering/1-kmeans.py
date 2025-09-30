@@ -15,26 +15,26 @@ def kmeans(X, k, iterations=1000):
     min_vals = np.min(X, axis=0)
     max_vals = np.max(X, axis=0)
 
-    # First use of np.random.uniform → initialization
+    # Random initialization of centroids within the data range
     C = np.random.uniform(low=min_vals, high=max_vals, size=(k, d))
 
     for _ in range(iterations):
-        # Assign each point to nearest centroid
+        # Assign points to nearest centroid
         distances = np.linalg.norm(X[:, np.newaxis] - C, axis=2)
         clss = np.argmin(distances, axis=1)
 
         C_new = np.copy(C)
 
-        for i in range(k):  # loop 1
+        for i in range(k):
             cluster_points = X[clss == i]
             if cluster_points.size == 0:
-                # Deterministic: pick a random existing point
+                # Reinitialize to random point from dataset
                 idx = np.random.randint(0, n)
                 C_new[i] = X[idx]
             else:
                 C_new[i] = np.mean(cluster_points, axis=0)
 
-        # Early stop if no change
+        # Stop if centroids converge
         if np.allclose(C, C_new):
             break
 
