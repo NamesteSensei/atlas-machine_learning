@@ -1,57 +1,43 @@
 #!/usr/bin/env python3
-"""
-Performs K-means clustering on a dataset.
-"""
+"""K-means clustering algorithm"""
 
 import numpy as np
-initialize = __import__('0-initialize').initialize
 
 
 def kmeans(X, k, iterations=1000):
-    """
-    Performs K-means clustering.
-
-    Parameters
-    ----------
-    X : np.ndarray of shape (n, d)
-        Dataset, where n is number of points and d is dimensions.
-    k : int
-        Number of clusters.
-    iterations : int, optional
-        Maximum number of iterations (default is 1000).
-
-    Returns
-    -------
-    C : np.ndarray of shape (k, d) or None
-        Centroid means for each cluster.
-    clss : np.ndarray of shape (n,) or None
-        Index of the cluster each point belongs to.
-    """
-    if (not isinstance(X, np.ndarray) or len(X.shape) != 2 or
-            not isinstance(k, int) or k <= 0 or
-            not isinstance(iterations, int) or iterations <= 0):
+    """Performs K-means on a dataset"""
+    if not isinstance(X, np.ndarray) or len(X.shape) != 2:
+        return None, None
+    if not isinstance(k, int) or k <= 0:
+        return None, None
+    if not isinstance(iterations, int) or iterations <= 0:
         return None, None
 
-    # Step 1: Initialize centroids
-    C = initialize(X, k)
-    if C is None:
-        return None, None
+    n, d = X.shape
+
+    # Initialize centroids using uniform distribution within data bounds
+    min_vals = np.min(X, axis=0)
+    max_vals = np.max(X, axis=0)
+    C = np.random.uniform(low=min_vals, high=max_vals, size=(k, d))
 
     for _ in range(iterations):
-        # Step 2: Assign points to nearest centroid
-        dist = np.linalg.norm(X[:, None, :] - C[None, :, :], axis=2)
-        clss = np.argmin(dist, axis=1)
+        # Assign clusters (Euclidean distance)
+        distances = np.linalg.norm(X[:, np.newaxis] - C, axis=2)
+        clss = np.argmin(distances, axis=1)
 
-        # Step 3: Update centroids
-        new_C = np.array([
-            X[clss == j].mean(axis=0) if np.any(clss == j)
-            else initialize(X, 1).reshape(-1)
-            for j in range(k)
-        ])
+        # Store old centroids
+        C_old = C.copy()
 
-        # Step 4: Check convergence
-        if np.allclose(C, new_C):
-            return C, clss
-        C = new_C
+        for i in range(k):
+            points = X[clss == i]
+            if points.shape[0] == 0:
+                # Reinitialize empty cluster
+                C[i] = np.random.uniform(low=min_vals, high=max_vals, size=(1, d))
+            else:
+                C[i] = np.mean(points, axis=0)
+
+        # Convergence check
+        if np.allclose(C, C_old):
+            break
 
     return C, clss
