@@ -1,26 +1,48 @@
 #!/usr/bin/env python3
-import numpy as np
-import matplotlib.pyplot as plt
+"""
+Main file to test Task 3: optimum_k
+"""
 
+import numpy as np
 optimum_k = __import__('3-optimum').optimum_k
+
 
 if __name__ == "__main__":
     np.random.seed(0)
-    a = np.random.multivariate_normal([30, 40], [[16, 0], [0, 16]], size=50)
-    b = np.random.multivariate_normal([10, 25], [[16, 0], [0, 16]], size=50)
-    c = np.random.multivariate_normal([40, 20], [[16, 0], [0, 16]], size=50)
-    d = np.random.multivariate_normal([60, 30], [[16, 0], [0, 16]], size=50)
-    e = np.random.multivariate_normal([20, 70], [[16, 0], [0, 16]], size=50)
-    X = np.concatenate((a, b, c, d, e), axis=0)
-    np.random.shuffle(X)
 
-    results, d_vars = optimum_k(X, kmin=1, kmax=10)
-    for k, var in enumerate(d_vars, 1):
-        print("Variance for {} clusters: {:.2f}".format(k, var))
+    # ---- Build a simple dataset ----
+    a = np.random.multivariate_normal([30, 40], [[16, 0], [0, 16]], size=30)
+    b = np.random.multivariate_normal([10, 25], [[16, 0], [0, 16]], size=30)
+    X = np.concatenate((a, b), axis=0)
 
-    # Elbow plot
-    plt.plot(range(1, 11), d_vars, 'o-')
-    plt.xlabel("k")
-    plt.ylabel("Variance")
-    plt.title("Elbow Method")
-    plt.show()
+    # ---- Normal case ----
+    results, d_vars = optimum_k(X, kmin=1, kmax=5)
+    print("Normal")
+    print("Number of results:", len(results))
+    print("Variances:", [round(v, 2) for v in d_vars])
+
+    # ---- High dimensional X ----
+    X_high = np.random.rand(50, 5)   # 5D data
+    results, d_vars = optimum_k(X_high, kmin=1, kmax=3)
+    print("High dimensional X")
+    print(results is not None and d_vars is not None)
+
+    # ---- Invalid X (not array) ----
+    results, d_vars = optimum_k("not an array", kmin=1, kmax=3)
+    print("invalid X:", results, d_vars)
+
+    # ---- Invalid kmin (too small) ----
+    results, d_vars = optimum_k(X, kmin=0, kmax=3)
+    print("invalid kmin:", results, d_vars)
+
+    # ---- Invalid kmax (too large) ----
+    results, d_vars = optimum_k(X, kmin=1, kmax=999)
+    print("invalid kmax:", results, d_vars)
+
+    # ---- kmax <= kmin ----
+    results, d_vars = optimum_k(X, kmin=5, kmax=3)
+    print("kmax >= kmin:", results, d_vars)
+
+    # ---- Invalid iterations ----
+    results, d_vars = optimum_k(X, kmin=1, kmax=3, iterations=0)
+    print("invalid iterations:", results, d_vars)
