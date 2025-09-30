@@ -10,47 +10,81 @@ def kmeans(X, k, iterations=1000):
     """
     Performs K-means on a dataset.
 
-    Parameters:
-    - X (np.ndarray): shape (n, d), dataset
-    - k (int): number of clusters
-    - iterations (int): maximum number of iterations
+    Parameters
+    ----------
+    X : np.ndarray of shape (n, d)
+        The dataset.
+    k : int
+        Number of clusters (k > 0 and k <= n).
+    iterations : int
+        Maximum number of iterations (iterations > 0).
 
-    Returns:
-    - C (np.ndarray): shape (k, d), centroid means for each cluster
-    - clss (np.ndarray): shape (n,), index of the cluster each point belongs to
-    - (None, None) if input is invalid
+    Returns
+    -------
+    C : np.ndarray of shape (k, d)
+        Final centroid means for each cluster.
+    clss : np.ndarray of shape (n,)
+        Index of the cluster in C that each data point belongs to.
+
+    Notes
+    -----
+    - Uses multivariate uniform initialization within per-dimension min/max.
+    - If a cluster becomes empty, its centroid is reinitialized by drawing
+      new coordinates uniformly within those per-dimension bounds.
+    - At most two loops are used: the outer EM loop and a small loop over k
+      to compute new means (vectorization elsewhere).
+    - On invalid input, returns (None, None).
     """
-    # --- Input validation ---
-    if (type(X) is not np.ndarray or X.ndim != 2 or X.size == 0):
+    # ---- Validation ----
+    if not isinstance(X, np.ndarray) or X.ndim != 2 or X.size == 0:
         return None, None
-    if type(k) is not int or k <= 0 or k > X.shape[0]:
+    if not isinstance(k, int) or k <= 0 or k > X.shape[0]:
         return None, None
-    if type(iterations) is not int or iterations <= 0:
+    if not isinstance(iterations, int) or iterations <= 0:
         return None, None
 
-    # --- Initialization ---
     n, d = X.shape
-    min_vals = X.min(axis=0)
-    max_vals = X.max(axis=0)
-    C = np.random.uniform(low=min_vals, high=max_vals, size=(k, d))
+    mins = X.min(axis=0)
+    maxs = X.max(axis=0)
 
-    for _ in range(iterations):  # loop 1
-        # Assign clusters (distance matrix n×k)
-        distances = np.linalg.norm(X[:, np.newaxis] - C, axis=2)
+    # ---- Initialize centroids (uniform once) ----
+    C = np.random.uniform(low=mins, high=maxs, size=(k, d))
+
+    # ---- K-means iterations (loop 1) ----
+    for _ in range(iterations):
+        # Assign points to nearest centroid (vectorized)
+        # Use squared distances to avoid unnecessary sqrt
+        # distances: (n, k)
+        diffs = X[:, None, :] - C[None, :, :]
+        distances = np.sum(diffs * diffs, axis=2)
         clss = np.argmin(distances, axis=1)
 
-        # Update centroids (loop 2)
-        new_C = np.copy(C)
+        # Update centroids (loop 2 over k)
+        new_C = C.copy()
         for i in range(k):
-            if np.any(clss == i):
-                new_C[i] = X[clss == i].mean(axis=0)
-            else:  # reinitialize empty cluster from data
-                new_C[i] = X[np.random.randint(0, n)]
+            mask = (clss == i)
+            if np.any(mask):
+                new_C[i] = X[mask].mean(axis=0)
+            # else: handled in vector step below
 
-        # Early stopping if converged
-        if np.allclose(C, new_C):
+        # Handle all empty clusters at once with a single uniform call
+        empty = ~np.isin(np.arange(k), clss)
+        if np.any(empty):
+            # One uniform call for all empties keeps RNG usage consistent
+            new_C[empty] = np.random.uniform(low=mins, high=maxs,
+                                             size=(np.sum(empty), d))
+
+        # Early stop if centroids no longer change (exact comparison)
+        # Using exact equality is safe here because means stabilize.
+        if np.all(C == new_C):
             C = new_C
             break
+
         C = new_C
+
+    # Recompute final assignments so clss matches the returned C
+    diffs = X[:, None, :] - C[None, :, :]
+    distances = np.sum(diffs * diffs, axis=2)
+    clss = np.argmin(distances, axis=1)
 
     return C, clss
