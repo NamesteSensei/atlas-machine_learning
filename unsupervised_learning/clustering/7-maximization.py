@@ -31,27 +31,29 @@ def maximization(X, g):
         Returned on failure if inputs are invalid.
     """
     try:
+        # Validate X
         if not isinstance(X, np.ndarray) or X.ndim != 2:
             return None, None, None
+        # Validate g
         if not isinstance(g, np.ndarray) or g.ndim != 2:
             return None, None, None
 
         n, d = X.shape
         k, n_check = g.shape
 
-        # Shape must align
+        # Shape mismatch
         if n != n_check:
             return None, None, None
 
-        # Responsibilities must be between 0 and 1
-        if np.any(g < 0) or np.any(g > 1):
+        # Validate range of g (allow tiny numerical noise)
+        if np.any(g < -1e-8) or np.any(g > 1 + 1e-8):
             return None, None, None
 
-        # Columns of g should sum to 1 (within tolerance)
-        if not np.allclose(np.sum(g, axis=0), 1):
+        # Validate that responsibilities sum to 1 per sample
+        if not np.allclose(np.sum(g, axis=0), 1, atol=1e-6):
             return None, None, None
 
-        # Effective counts
+        # Effective number of samples assigned to each cluster
         Nk = np.sum(g, axis=1)
 
         # Updated priors
@@ -60,7 +62,7 @@ def maximization(X, g):
         # Updated means
         m = (g @ X) / Nk[:, np.newaxis]
 
-        # Updated covariances
+        # Updated covariance matrices
         S = np.zeros((k, d, d))
         for i in range(k):
             diff = X - m[i]
@@ -68,5 +70,6 @@ def maximization(X, g):
             S[i] = (weighted.T @ diff) / Nk[i]
 
         return pi, m, S
+
     except Exception:
         return None, None, None
