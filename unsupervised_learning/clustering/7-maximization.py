@@ -17,17 +17,16 @@ def maximization(X, g):
     X : np.ndarray of shape (n, d)
         Input data with n samples and d features.
     g : np.ndarray of shape (k, n)
-        Posterior probabilities (responsibilities) from the
-        expectation step.
+        Posterior probabilities (responsibilities).
 
     Returns
     -------
     pi : np.ndarray of shape (k,)
-        Updated prior probabilities, one per cluster.
+        Updated priors.
     m : np.ndarray of shape (k, d)
-        Updated mean vectors, one per cluster.
+        Updated mean vectors.
     S : np.ndarray of shape (k, d, d)
-        Updated covariance matrices, one per cluster.
+        Updated covariance matrices.
     None, None, None
         Returned on failure if inputs are invalid.
     """
@@ -40,10 +39,19 @@ def maximization(X, g):
         n, d = X.shape
         k, n_check = g.shape
 
+        # Shape must align
         if n != n_check:
             return None, None, None
 
-        # Effective number of points assigned to each cluster
+        # Responsibilities must be between 0 and 1
+        if np.any(g < 0) or np.any(g > 1):
+            return None, None, None
+
+        # Columns of g should sum to 1 (within tolerance)
+        if not np.allclose(np.sum(g, axis=0), 1):
+            return None, None, None
+
+        # Effective counts
         Nk = np.sum(g, axis=1)
 
         # Updated priors
@@ -52,7 +60,7 @@ def maximization(X, g):
         # Updated means
         m = (g @ X) / Nk[:, np.newaxis]
 
-        # Updated covariances (loop only across clusters)
+        # Updated covariances
         S = np.zeros((k, d, d))
         for i in range(k):
             diff = X - m[i]
