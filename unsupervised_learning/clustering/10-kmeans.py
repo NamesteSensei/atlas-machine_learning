@@ -2,14 +2,13 @@
 """
 This module implements K-means clustering using scikit-learn's KMeans.
 
-Only the sklearn.cluster module is imported as per project constraints.
-
 Function:
-    kmeans(X, k): Performs K-means clustering and returns the centroids
-    and the class assignments for each data point.
+    kmeans(X, k): Fits K-means to the data and returns cluster centroids
+    and index labels for each data point.
 """
 
-import sklearn.cluster
+import numpy as np
+from sklearn.cluster import KMeans
 
 
 def kmeans(X, k):
@@ -17,16 +16,16 @@ def kmeans(X, k):
     Performs K-means on a dataset
 
     Args:
-        X (numpy.ndarray): shape (n, d) containing the dataset
+        X (np.ndarray): shape (n, d) dataset
         k (int): number of clusters
 
     Returns:
-        C (numpy.ndarray): shape (k, d) array with centroid means
-        clss (numpy.ndarray): shape (n,) array with cluster assignments
+        C (np.ndarray): shape (k, d), centroid coordinates
+        clss (np.ndarray): shape (n,), index of the cluster each point belongs to
     """
-    model = sklearn.cluster.KMeans(n_clusters=k)
-    model.fit(X)
-    C = model.cluster_centers_
-    clss = model.labels_
+    kmeans_model = KMeans(n_clusters=k)
+    kmeans_model.fit(X)
+    C = kmeans_model.cluster_centers_
+    clss = kmeans_model.labels_
 
     return C, clss
