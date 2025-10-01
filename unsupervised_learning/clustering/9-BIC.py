@@ -50,11 +50,11 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
             return None, None, None, None
         if kmax is not None and (not isinstance(kmax, int) or kmax <= 0):
             return None, None, None, None
-        if not isinstance(iterations, int) or iterations <= 0:
+        if not isinstance(iterations, (int, np.integer)) or iterations <= 0:
             return None, None, None, None
-        if not isinstance(tol, (float, int)) or tol < 0:
+        if not isinstance(tol, (float, int, np.floating)) or tol < 0:
             return None, None, None, None
-        if not isinstance(verbose, bool):
+        if not isinstance(verbose, (bool, np.bool_)):
             return None, None, None, None
 
         n, d = X.shape
@@ -77,7 +77,7 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
                 models.append((None, None, None))
                 continue
 
-            # Parameters count: priors + means + covariances
+            # Parameters count
             p = (k * d) + (k * d * (d + 1) / 2) + (k - 1)
             bic = p * np.log(n) - 2 * log_likelihood
 
@@ -88,7 +88,6 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
         l = np.array(l_vals)
         b = np.array(b_vals)
 
-        # Pick model with smallest BIC
         best_idx = np.argmin(b)
         best_k = ks[best_idx]
         best_result = models[best_idx]
