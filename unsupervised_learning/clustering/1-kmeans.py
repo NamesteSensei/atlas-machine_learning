@@ -1,55 +1,49 @@
 #!/usr/bin/env python3
 """
-K-means clustering algorithm implementation.
+K-means clustering algorithm from scratch.
 """
-
 import numpy as np
 
 
 def kmeans(X, k, iterations=1000):
     """
-    Performs K-means on a dataset.
+    Performs K-means on dataset X.
 
-    Parameters:
-    - X (np.ndarray): shape (n, d), dataset
-    - k (int): number of clusters
-    - iterations (int): maximum number of iterations
+    Args:
+        X: ndarray of shape (n, d)
+        k: number of clusters
+        iterations: max number of updates
 
     Returns:
-    - C (np.ndarray): shape (k, d), centroid means for each cluster
-    - clss (np.ndarray): shape (n,), index of the cluster each point belongs to
-    - (None, None) if input is invalid
+        C: ndarray (k, d) - centroid means
+        clss: ndarray (n,) - cluster assignments
     """
-    # --- Input validation ---
-    if (type(X) is not np.ndarray or X.ndim != 2 or X.size == 0):
+    if not isinstance(X, np.ndarray) or len(X.shape) != 2:
         return None, None
-    if type(k) is not int or k <= 0 or k > X.shape[0]:
+    if not isinstance(k, int) or k <= 0:
         return None, None
-    if type(iterations) is not int or iterations <= 0:
+    if not isinstance(iterations, int) or iterations <= 0:
         return None, None
 
-    # --- Initialization ---
     n, d = X.shape
-    min_vals = X.min(axis=0)
-    max_vals = X.max(axis=0)
-    C = np.random.uniform(low=min_vals, high=max_vals, size=(k, d))
 
-    for _ in range(iterations):  # loop 1
-        # Assign clusters (distance matrix n×k)
-        distances = np.linalg.norm(X[:, np.newaxis] - C, axis=2)
-        clss = np.argmin(distances, axis=1)
+    min_vals = np.min(X, axis=0)
+    max_vals = np.max(X, axis=0)
+    C = np.random.uniform(min_vals, max_vals, (k, d))
 
-        # Update centroids (loop 2)
+    for _ in range(iterations):
+        D = np.linalg.norm(X[:, None] - C[None, :], axis=2)
+        clss = np.argmin(D, axis=1)
+
         new_C = np.copy(C)
         for i in range(k):
-            if np.any(clss == i):
-                new_C[i] = X[clss == i].mean(axis=0)
-            else:  # reinitialize empty cluster
-                new_C[i] = np.random.uniform(low=min_vals, high=max_vals)
+            points = X[clss == i]
+            if points.shape[0] == 0:
+                new_C[i] = np.random.uniform(min_vals, max_vals)
+            else:
+                new_C[i] = np.mean(points, axis=0)
 
-        # Early stopping if converged
         if np.allclose(C, new_C):
-            C = new_C
             break
         C = new_C
 
