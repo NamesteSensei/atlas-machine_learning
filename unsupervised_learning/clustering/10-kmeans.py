@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
-import numpy as np
-from sklearn.cluster import KMeans
+import sklearn.cluster
+
 
 def kmeans(X, k):
     """
     Performs K-means on a dataset
 
     Args:
-        X (np.ndarray): (n, d) dataset
+        X (numpy.ndarray): shape (n, d) containing the dataset
         k (int): number of clusters
 
     Returns:
-        C (np.ndarray): (k, d) array of centroid means
-        clss (np.ndarray): (n,) index of the cluster each point belongs to
+        C (numpy.ndarray): shape (k, d) array with centroid means
+        clss (numpy.ndarray): shape (n,) array with cluster assignments
     """
-    kmeans_model = KMeans(n_clusters=k)
-    kmeans_model.fit(X)
-    C = kmeans_model.cluster_centers_
-    clss = kmeans_model.labels_
+    model = sklearn.cluster.KMeans(n_clusters=k)
+    model.fit(X)
+    C = model.cluster_centers_
+    clss = model.labels_
 
     return C, clss
