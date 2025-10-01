@@ -5,6 +5,9 @@
 Test driver for the BIC-based selection of the number of clusters in a GMM.
 """
 
+import matplotlib
+matplotlib.use("Agg")  # headless-safe backend
+
 import matplotlib.pyplot as plt
 import numpy as np
 BIC = __import__('9-BIC').BIC
@@ -36,17 +39,19 @@ if __name__ == '__main__':
     print(l)
     print(b)
 
-    # Plot log-likelihood progression
+    # Plot log-likelihood curve
     x = np.arange(1, 11)
     plt.plot(x, l, 'r')
     plt.xlabel('Clusters')
     plt.ylabel('Log Likelihood')
     plt.tight_layout()
-    plt.show()
+    plt.savefig("loglikelihood.png")
+    plt.close()
 
     # Plot BIC values
     plt.plot(x, b, 'b')
     plt.xlabel('Clusters')
     plt.ylabel('BIC')
     plt.tight_layout()
-    plt.show()
+    plt.savefig("bic.png")
+    plt.close()
