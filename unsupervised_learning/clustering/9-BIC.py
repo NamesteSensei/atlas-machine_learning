@@ -22,7 +22,7 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
         Minimum number of clusters to check (inclusive).
     kmax : int, optional
         Maximum number of clusters to check (inclusive).
-        If None, defaults to n (maximum possible).
+        If None, defaults to n.
     iterations : int, optional
         Maximum number of update cycles in EM (default 1000).
     tol : float, optional
@@ -36,9 +36,9 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
         Optimal cluster count chosen by BIC.
     best_result : tuple
         (pi, m, S) parameters for the optimal model.
-    l : np.ndarray of shape (kmax - kmin + 1,)
+    l : np.ndarray
         Log-likelihood values for each k tested.
-    b : np.ndarray of shape (kmax - kmin + 1,)
+    b : np.ndarray
         BIC values for each k tested.
     None, None, None, None
         Returned on failure if inputs are invalid.
@@ -72,13 +72,12 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
             )
 
             if pi is None:
-                # Mark this run as failed
                 l_vals.append(-np.inf)
                 b_vals.append(np.inf)
                 models.append((None, None, None))
                 continue
 
-            # Number of parameters
+            # Parameters count: priors + means + covariances
             p = (k * d) + (k * d * (d + 1) / 2) + (k - 1)
             bic = p * np.log(n) - 2 * log_likelihood
 
@@ -89,7 +88,7 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
         l = np.array(l_vals)
         b = np.array(b_vals)
 
-        # Pick smallest BIC among valid results
+        # Pick model with smallest BIC
         best_idx = np.argmin(b)
         best_k = ks[best_idx]
         best_result = models[best_idx]
