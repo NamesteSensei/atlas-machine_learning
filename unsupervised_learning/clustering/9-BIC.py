@@ -50,11 +50,11 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
             return None, None, None, None
         if kmax is not None and (not isinstance(kmax, int) or kmax <= 0):
             return None, None, None, None
-        if not isinstance(iterations, (int, np.integer)) or iterations <= 0:
+        if not isinstance(iterations, int) or iterations <= 0:
             return None, None, None, None
-        if not isinstance(tol, (float, int, np.floating)) or tol < 0:
+        if not isinstance(tol, (float, int)) or tol < 0:
             return None, None, None, None
-        if not isinstance(verbose, (bool, np.bool_)):
+        if not isinstance(verbose, bool):
             return None, None, None, None
 
         n, d = X.shape
@@ -72,13 +72,12 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
             )
 
             if pi is None:
-                # If EM fails for this k, store bad values but keep going
                 l_vals.append(-np.inf)
                 b_vals.append(np.inf)
                 models.append((None, None, None))
                 continue
 
-            # Parameters count
+            # Parameters count: priors + means + covariances
             p = (k * d) + (k * d * (d + 1) / 2) + (k - 1)
             bic = p * np.log(n) - 2 * log_likelihood
 
@@ -89,11 +88,7 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
         l = np.array(l_vals)
         b = np.array(b_vals)
 
-        # If all failed
-        if np.all(np.isinf(b)):
-            return None, None, l, b
-
-        # Pick model with smallest BIC among valid ones
+        # Pick model with smallest BIC
         best_idx = np.argmin(b)
         best_k = ks[best_idx]
         best_result = models[best_idx]
