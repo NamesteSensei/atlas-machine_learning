@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+"""
+This module implements K-means clustering using scikit-learn's KMeans.
+
+Only the sklearn.cluster module is imported as per project constraints.
+
+Function:
+    kmeans(X, k): Performs K-means clustering and returns the centroids
+    and the class assignments for each data point.
+"""
+
 import sklearn.cluster
 
 
