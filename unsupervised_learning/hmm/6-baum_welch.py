@@ -6,27 +6,39 @@ Implements the Baum–Welch algorithm (EM) for Hidden Markov Models.
 
 import numpy as np
 
-# Import dynamically since file names start with numbers
-forward = __import__('3-forward').forward
-backward = __import__('5-backward').backward
+
+def forward(Observation, Emission, Transition, Initial):
+    """Performs the Forward algorithm."""
+    N, M = Emission.shape
+    T = Observation.shape[0]
+    F = np.zeros((N, T))
+    F[:, 0] = (Initial.T * Emission[:, Observation[0]]).flatten()
+    for t in range(1, T):
+        for j in range(N):
+            F[j, t] = np.sum(F[:, t - 1] * Transition[:, j]) * \
+                Emission[j, Observation[t]]
+    P = np.sum(F[:, -1])
+    return P, F
+
+
+def backward(Observation, Emission, Transition, Initial):
+    """Performs the Backward algorithm."""
+    T = Observation.shape[0]
+    N = Emission.shape[0]
+    B = np.zeros((N, T))
+    B[:, -1] = 1
+    for t in range(T - 2, -1, -1):
+        for i in range(N):
+            B[i, t] = np.sum(Transition[i] *
+                             Emission[:, Observation[t + 1]] * B[:, t + 1])
+    P = np.sum(Initial.T * Emission[:, Observation[0]] * B[:, 0])
+    return P, B
 
 
 def baum_welch(Observations, Transition, Emission, Initial,
                iterations=1000):
     """
     Performs the Baum–Welch algorithm to train an HMM.
-
-    Parameters:
-        Observations (np.ndarray): array of shape (T,)
-            indices of observations.
-        Transition (np.ndarray): shape (M, M), transition probabilities.
-        Emission (np.ndarray): shape (M, N), emission probabilities.
-        Initial (np.ndarray): shape (M, 1), initial state probabilities.
-        iterations (int): number of EM steps to perform.
-
-    Returns:
-        Transition (np.ndarray): updated transition matrix.
-        Emission (np.ndarray): updated emission matrix.
     """
     if (not isinstance(Observations, np.ndarray)
             or not isinstance(Transition, np.ndarray)
@@ -43,7 +55,6 @@ def baum_welch(Observations, Transition, Emission, Initial,
     M, N = Emission.shape
 
     for _ in range(iterations):
-        # Expectation Step
         P, F = forward(Observations, Emission, Transition, Initial)
         _, B = backward(Observations, Emission, Transition, Initial)
 
@@ -63,7 +74,6 @@ def baum_welch(Observations, Transition, Emission, Initial,
 
         gamma[:, T - 1] = F[:, T - 1] / np.sum(F[:, T - 1])
 
-        # Maximization Step
         Transition = (np.sum(xi, axis=2)
                       / np.sum(gamma[:, :-1], axis=1).reshape(-1, 1))
 
