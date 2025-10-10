@@ -1,0 +1,2 @@
+Optimal parameters: [100.           9.           0.31720685   4.           5.        ]
+Optimal value: -0.96
