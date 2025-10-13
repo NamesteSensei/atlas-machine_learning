@@ -1,5 +1,47 @@
-MNIST.npz
-model_reg.h5
+# Ignore Python bytecode and cache
 __pycache__/
-venv/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore virtual environments
+venv*/
+.env/
+env/
+venv_auto*/
 venv39/
+
+# Ignore large model/data files
+*.h5
+*.hdf5
+*.ckpt
+*.pb
+*.npz
+*.npy
+*.pkl
+*.joblib
+*.onnx
+
+# Ignore dataset files and temporary storage
+*.csv
+*.tsv
+*.zip
+*.tar
+*.gz
+*.pickle
+*.db
+
+# Ignore OS/IDE files
+.DS_Store
+.idea/
+.vscode/
+
+# Ignore logs
+*.log
+
+# Ignore TensorFlow / PyTorch export artifacts
+saved_model/
+checkpoint/
