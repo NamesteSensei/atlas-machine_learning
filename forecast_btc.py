@@ -1,85 +1,93 @@
 #!/usr/bin/env python3
 """
-Train LSTM model for BTC price forecasting (v3.0)
+forecast_btc.py
+Train an LSTM model to forecast Bitcoin prices using cleaned data.
 """
+
 import os
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from sklearn.preprocessing import MinMaxScaler
 import wandb
 from wandb.integration.keras import WandbCallback
 
-DATA_DIR = "btc_data"
-MODEL_DIR = "models"
-SEQ_LENGTH = 60
-EPOCHS = 50
-BATCH_SIZE = 64
+# Initialize Weights & Biases
+wandb.init(
+    project="btc_forecasting",
+    entity="namestesensei-self",
+    name="forecast_btc_model"
+)
+
+DATA_PATH = "btc_data/processed_btc_data.csv"
+MODEL_SAVE_PATH = "models/best_model.keras"
 
 
 def load_data():
-    """Load preprocessed numpy sequences."""
-    X = np.load(os.path.join(DATA_DIR, "X.npy"))
-    y = np.load(os.path.join(DATA_DIR, "y.npy"))
-    if X.size == 0 or y.size == 0:
-        raise ValueError("❌ Empty training data! Run preprocess_data.py first.")
-    split = int(0.8 * len(X))
-    X_train, X_val = X[:split], X[split:]
-    y_train, y_val = y[:split], y[split:]
-    X_train = np.expand_dims(X_train, axis=-1)
-    X_val = np.expand_dims(X_val, axis=-1)
-    return X_train, X_val, y_train, y_val
+    """Load and scale preprocessed BTC data"""
+    print(">>> Loading processed data")
+    df = pd.read_csv(DATA_PATH)
+
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaled_data = scaler.fit_transform(df)
+    X = np.load("btc_data/X.npy")
+    y = np.load("btc_data/y.npy")
+
+    return X, y, scaler
 
 
-def build_model():
-    """Build stacked LSTM."""
+def build_model(input_shape):
+    """Define the LSTM model"""
     model = Sequential([
-        LSTM(128, return_sequences=True, input_shape=(SEQ_LENGTH, 1)),
+        LSTM(128, return_sequences=True, input_shape=input_shape),
         Dropout(0.2),
         LSTM(64, return_sequences=False),
         Dropout(0.2),
         Dense(1)
     ])
+
     model.compile(optimizer="adam", loss="mse")
     return model
 
 
 def main():
-    os.makedirs(MODEL_DIR, exist_ok=True)
+    print(">>> Loading preprocessed sequences...")
+    X, y, scaler = load_data()
+    print(f"Loaded: X={X.shape}, y={y.shape}")
 
-    wandb.init(project="btc_forecasting", config={
-        "epochs": EPOCHS,
-        "batch_size": BATCH_SIZE,
-        "sequence_length": SEQ_LENGTH,
-        "architecture": "Stacked LSTM (128→64) + Dropout 0.2"
-    })
+    print(">>> Building model...")
+    model = build_model((X.shape[1], X.shape[2]))
 
-    print(">>> Loading data...")
-    X_train, X_val, y_train, y_val = load_data()
+    early_stop = EarlyStopping(
+        monitor="val_loss",
+        patience=10,
+        restore_best_weights=True
+    )
+    checkpoint = ModelCheckpoint(
+        MODEL_SAVE_PATH,
+        monitor="val_loss",
+        save_best_only=True
+    )
 
-    model = build_model()
-
-    callbacks = [
-        EarlyStopping(monitor="val_loss", patience=5, restore_best_weights=True),
-        ModelCheckpoint(os.path.join(MODEL_DIR, "best_model.keras"),
-                        save_best_only=True, monitor="val_loss"),
-        WandbCallback(save_model=False)
-    ]
-
-    print(">>> Training model...")
-    model.fit(
-        X_train, y_train,
-        validation_data=(X_val, y_val),
-        epochs=EPOCHS,
-        batch_size=BATCH_SIZE,
-        callbacks=callbacks,
+    print(">>> Starting training...")
+    history = model.fit(
+        X,
+        y,
+        epochs=50,
+        batch_size=64,
+        validation_split=0.2,
+        callbacks=[
+            early_stop,
+            checkpoint,
+            WandbCallback(save_model=False)
+        ],
         verbose=1
     )
 
-    model.save(os.path.join(MODEL_DIR, "final_model.keras"))
-    print("✅ Training complete! Model saved in models/")
-    wandb.finish()
+    print("✅ Training complete! Model saved in 'models/' directory.")
 
 
 if __name__ == "__main__":
