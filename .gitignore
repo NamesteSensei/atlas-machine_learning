@@ -1,3 +1,4 @@
+
 # Ignore Python bytecode and cache
 __pycache__/
 *.py[cod]
@@ -45,3 +46,22 @@ venv39/
 # Ignore TensorFlow / PyTorch export artifacts
 saved_model/
 checkpoint/
+=======
+# Virtual environment
+venv/
+__pycache__/
+*.pyc
+
+# Data and models
+btc_data/*.csv
+btc_data/*.zip
+models/*.h5
+models/*.keras
+wandb/
+logs/
+.DS_Store
+
+# System files
+*.log
+*.tmp
+ Added Bitcoin price forecasting project with LSTM model, live data integration, and automated retraining features)
