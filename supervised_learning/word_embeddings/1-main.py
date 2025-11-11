@@ -11,8 +11,6 @@ sentences = ["Holberton school is Awesome!",
              "No one said that the cake was not very good",
              "Life is beautiful"]
 
-vocab = ["awesome", "learning", "children", "cake", "good", "none", "machine"]
-
-E, F = tf_idf(sentences, vocab)
+E, F = tf_idf(sentences)
 print(E)
 print(F)
