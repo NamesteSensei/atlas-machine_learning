@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Creates a Bag‑of‑Words (BoW) embedding matrix."""
+"""Creates a Bag of Words embedding matrix."""
 
 import numpy as np
 import re
@@ -7,37 +7,37 @@ import re
 
 def bag_of_words(sentences, vocab=None):
     """
-    Builds a BoW matrix from a list of sentences.
+    Creates a Bag of Words (BoW) embedding matrix.
     Args:
         sentences (list): sentences to analyze
-        vocab (list): optional vocabulary; if None, built from sentences
+        vocab (list): list of vocabulary words to use
     Returns:
-        embeddings (ndarray): shape (s, f) word‑count matrix
-        features (list): list of vocabulary terms
+        embeddings (ndarray): shape (s, f) BoW matrix
+        features (list): list of features (words)
     """
-    def clean_text(text):
-        """Lowercase and remove punctuation."""
+    def clean(text):
+        """Lowercase text and remove punctuation."""
         text = text.lower()
-        text = re.sub(r'[^\w\s]', '', text)
+        text = re.sub(r"[^a-zA-Z\s]", "", text)
         return text.split()
 
-    # Tokenize and clean
-    tokenized = [clean_text(s) for s in sentences]
+    # Clean and tokenize sentences
+    tokenized = [clean(s) for s in sentences]
 
-    # Build vocabulary if none provided
+    # Build vocabulary if not provided
     if vocab is None:
         vocab = sorted({w for sent in tokenized for w in sent})
 
-    # Word index map
-    w_idx = {w: i for i, w in enumerate(vocab)}
+    # Map words to column indices
+    word_idx = {w: i for i, w in enumerate(vocab)}
 
     # Initialize zero matrix
-    mat = np.zeros((len(sentences), len(vocab)), dtype=int)
+    embeddings = np.zeros((len(sentences), len(vocab)), dtype=int)
 
-    # Count word occurrences
+    # Fill with word counts
     for i, sent in enumerate(tokenized):
         for w in sent:
-            if w in w_idx:
-                mat[i, w_idx[w]] += 1
+            if w in word_idx:
+                embeddings[i, word_idx[w]] += 1
 
-    return mat, vocab
+    return embeddings, vocab
