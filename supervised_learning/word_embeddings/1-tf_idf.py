@@ -45,10 +45,10 @@ def tf_idf(sentences, vocab=None):
     features : numpy.ndarray
         Array of the features (vocabulary words) used for embeddings.
     """
-    # Tokenize and clean sentences
+    # Tokenize sentences
     tokenized = [preprocess(s) for s in sentences]
 
-    # Build vocabulary
+    # Build or use given vocabulary
     if vocab is None:
         vocab_set = set()
         for words in tokenized:
@@ -59,31 +59,30 @@ def tf_idf(sentences, vocab=None):
     s = len(sentences)
     f = len(vocab)
 
-    # Initialize matrices
+    # Term Frequency (TF)
     tf = np.zeros((s, f))
-    idf = np.zeros(f)
-
-    # Compute Term Frequency (TF)
     for i, words in enumerate(tokenized):
+        total = len(words)
         for word in words:
             if word in vocab:
                 j = vocab.index(word)
                 tf[i][j] += 1
-        if len(words) > 0:
-            tf[i] = tf[i] / len(words)
+        if total > 0:
+            tf[i] /= total
 
-    # Compute Inverse Document Frequency (IDF)
+    # Inverse Document Frequency (IDF)
+    idf = np.zeros(f)
     for j, word in enumerate(vocab):
         doc_count = sum(word in words for words in tokenized)
         if doc_count > 0:
-            idf[j] = np.log(s / doc_count)
+            idf[j] = np.log10(s / doc_count) + 1  # log base10 + 1
         else:
-            idf[j] = 0.0
+            idf[j] = 0
 
-    # Compute TF-IDF
+    # TF-IDF matrix
     embeddings = tf * idf
 
-    # Normalize embeddings (L2 norm)
+    # L2-normalize each row
     for i in range(s):
         norm = np.linalg.norm(embeddings[i])
         if norm > 0:
