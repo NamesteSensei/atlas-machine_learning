@@ -1,88 +1,38 @@
 #!/usr/bin/env python3
 """
-Module that creates a TF-IDF embedding matrix from a list of sentences.
+This module defines the tf_idf function that generates a TF-IDF embedding matrix
+for a list of sentences using a provided vocabulary or the full word set.
 """
 
 import numpy as np
-import re
-
-
-def preprocess(sentence):
-    """
-    Cleans and tokenizes a sentence into lowercase words.
-
-    Parameters
-    ----------
-    sentence : str
-        Input sentence to process.
-
-    Returns
-    -------
-    list
-        List of lowercase words without punctuation or possessives.
-    """
-    sentence = re.sub(r"\'s\b", "", sentence.lower())
-    sentence = re.sub(r"[^a-z\s]", "", sentence)
-    return sentence.split()
-
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 def tf_idf(sentences, vocab=None):
     """
-    Creates a TF-IDF embedding matrix.
+    Creates a TF-IDF embedding for a list of sentences.
 
-    Parameters
-    ----------
-    sentences : list
-        List of sentences to analyze.
-    vocab : list, optional
-        List of vocabulary words to use for the analysis.
-        If None, all words within the sentences are used.
+    Args:
+        sentences (list): List of sentences to analyze.
+        vocab (list): List of vocabulary words to use for analysis.
+                      If None, all words within the sentences are used.
 
-    Returns
-    -------
-    embeddings : numpy.ndarray
-        Array of shape (s, f) containing the embeddings.
-    features : numpy.ndarray
-        Array of the features (vocabulary words) used for embeddings.
+    Returns:
+        embeddings (np.ndarray): Array of shape (s, f) containing embeddings.
+                                 s = number of sentences
+                                 f = number of features analyzed.
+        features (list): List of feature words used for embeddings.
     """
-    # Tokenize and clean sentences
-    tokenized = [preprocess(s) for s in sentences]
+    # /** Create the TF-IDF vectorizer object **/
+    vectorizer = TfidfVectorizer(vocabulary=vocab)
 
-    # Build vocabulary if not provided
-    if vocab is None:
-        vocab = sorted({word for sent in tokenized for word in sent})
+    # /** Fit the vectorizer on the input sentences and transform them **/
+    X = vectorizer.fit_transform(sentences)
 
-    features = np.array(vocab)
-    s = len(sentences)
-    f = len(vocab)
+    # /** Extract the feature names (vocabulary terms actually used) **/
+    features = vectorizer.get_feature_names_out()
 
-    # Initialize TF and IDF arrays
-    tf = np.zeros((s, f))
-    idf = np.zeros(f)
+    # /** Convert the sparse matrix into a dense NumPy array **/
+    embeddings = X.toarray()
 
-    # --- Term Frequency (TF) ---
-    for i, words in enumerate(tokenized):
-        for word in words:
-            if word in vocab:
-                tf[i][vocab.index(word)] += 1
-        total = len(words)
-        if total > 0:
-            tf[i] /= total
-
-    # --- Inverse Document Frequency (IDF) ---
-    for j, word in enumerate(vocab):
-        doc_count = sum(word in sent for sent in tokenized)
-        if doc_count > 0:
-            idf[j] = 1 + np.log(s / doc_count)  # natural log
-        else:
-            idf[j] = 0
-
-    # --- Compute TF-IDF ---
-    embeddings = tf * idf
-
-    # --- L2 Normalization ---
-    norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
-    norms[norms == 0] = 1
-    embeddings = embeddings / norms
-
+    # /** Return the dense embeddings matrix and the feature list **/
     return embeddings, features
