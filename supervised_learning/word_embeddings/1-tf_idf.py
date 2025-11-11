@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
-This module defines the tf_idf function that generates a TF-IDF embedding matrix
-for a list of sentences using a provided vocabulary or the full word set.
+This module defines the tf_idf function that generates a TF-IDF
+embedding matrix for a list of sentences using a provided vocabulary
+or the full word set.
 """
 
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
+
 
 def tf_idf(sentences, vocab=None):
     """
