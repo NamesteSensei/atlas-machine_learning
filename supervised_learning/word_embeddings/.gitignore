@@ -1,0 +1,32 @@
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore virtual environments
+venv/
+.env/
+ENV/
+env/
+
+# Ignore package build artifacts
+*.egg-info/
+dist/
+build/
+
+# Ignore Jupyter notebook checkpoints (if any)
+.ipynb_checkpoints/
+
+# Ignore system files
+.DS_Store
+
+# Ignore logs
+*.log
+
+# Ignore IDE/editor-specific files
+.vscode/
+.idea/
+
+# Optional: if you're using macOS/Linux temp files
+*.swp
+*~
