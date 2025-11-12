@@ -30,3 +30,6 @@ build/
 # Optional: if you're using macOS/Linux temp files
 *.swp
 *~
+venv*/
+__pycache__/
+*.pyc
