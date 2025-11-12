@@ -39,7 +39,6 @@ def word2vec_model(
 
     """
     Create and configure a Word2Vec model.
-    Note: Only gensim is allowed for import.
     """
     model = gensim.models.Word2Vec(
         vector_size=vector_size,
