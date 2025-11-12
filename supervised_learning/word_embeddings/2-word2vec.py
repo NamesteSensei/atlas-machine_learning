@@ -1,66 +1,65 @@
 #!/usr/bin/env python3
-"""Word2Vec Model Trainer"""
+"""Word2Vec Model Trainer Module"""
 
-from gensim.models import Word2Vec
+import gensim
+
 
 def word2vec_model(
-        sentences, 
-        vector_size=100, 
-        min_count=5, 
-        window=5, 
-        negative=5, 
-        cbow=True, 
-        epochs=5, 
-        seed=0, 
+        sentences,
+        vector_size=100,
+        min_count=5,
+        window=5,
+        negative=5,
+        cbow=True,
+        epochs=5,
+        seed=0,
         workers=1):
     """
     /**
-     * Function to create, build, and train a Gensim Word2Vec model.
+     * Trains a Word2Vec model using Gensim.
      *
      * PARAMETERS:
      * sentences  → list of tokenized sentences to train on.
-     * vector_size → dimension of the word embedding vectors.
-     * min_count   → ignores words with total frequency lower than this.
-     * window      → maximum distance between target word and its context.
-     * negative    → number of negative samples (for negative sampling).
-     * cbow        → training algorithm: True for CBOW, False for Skip-gram.
-     * epochs      → number of training iterations.
+     * vector_size → dimensionality of embedding vectors.
+     * min_count   → ignore words with frequency lower than this value.
+     * window      → max distance between current and predicted word.
+     * negative    → number of negative samples for training.
+     * cbow        → True for CBOW; False for Skip-gram.
+     * epochs      → number of iterations to train over the corpus.
      * seed        → random seed for reproducibility.
-     * workers     → number of CPU threads to train with.
+     * workers     → number of worker threads to train the model.
      *
      * RETURNS:
-     * The trained Word2Vec model.
+     * Trained gensim Word2Vec model.
      */
     """
 
-    """/** Set training algorithm type: 0 for CBOW, 1 for Skip-gram **/"""
+    """Set training algorithm type: 0 for CBOW, 1 for Skip-gram"""
     sg = 0 if cbow else 1
 
     """
-    /** 
-     * Initialize the Word2Vec model with parameters.
-     * We do NOT train yet; we just build the model configuration.
-     */
+    Create and configure a Word2Vec model.
+    Note: Only gensim is allowed for import.
     """
-    model = Word2Vec(
-        vector_size=vector_size,   # number of features in the word vectors
-        window=window,             # size of context window
-        min_count=min_count,       # ignore rare words
-        workers=workers,           # CPU threads
-        sg=sg,                     # 0=CBOW, 1=Skip-gram
-        negative=negative,         # negative sampling
-        seed=seed                  # random seed
+    model = gensim.models.Word2Vec(
+        vector_size=vector_size,
+        window=window,
+        min_count=min_count,
+        workers=workers,
+        sg=sg,
+        negative=negative,
+        seed=seed
     )
 
-    """/** Build vocabulary from training sentences **/"""
+    """Build vocabulary from the provided list of tokenized sentences"""
     model.build_vocab(sentences)
 
-    """/** Train the model using the prepared vocabulary **/"""
+    """Train model using corpus with defined number of epochs"""
     model.train(
-        sentences, 
+        sentences,
         total_examples=model.corpus_count,
         epochs=epochs
     )
 
-    """/** Return the trained Word2Vec model **/"""
+    """Return the trained Word2Vec model"""
     return model
