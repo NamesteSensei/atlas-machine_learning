@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Word2Vec Model Trainer Module"""
+"""Train a Word2Vec model using gensim"""
 
 import gensim
 
@@ -15,50 +15,35 @@ def word2vec_model(
         seed=0,
         workers=1):
     """
-    /**
-     * Trains a Word2Vec model using Gensim.
-     *
-     * PARAMETERS:
-     * sentences  → list of tokenized sentences to train on.
-     * vector_size → dimensionality of embedding vectors.
-     * min_count   → ignore words with frequency lower than this value.
-     * window      → max distance between current and predicted word.
-     * negative    → number of negative samples for training.
-     * cbow        → True for CBOW; False for Skip-gram.
-     * epochs      → number of iterations to train over the corpus.
-     * seed        → random seed for reproducibility.
-     * workers     → number of worker threads to train the model.
-     *
-     * RETURNS:
-     * Trained gensim Word2Vec model.
-     */
-    """
+    Train a Word2Vec model on tokenized text data.
 
-    """Set training algorithm type: 0 for CBOW, 1 for Skip-gram"""
+    Args:
+        sentences: list of tokenized sentences
+        vector_size: size of word embeddings
+        min_count: ignore words with freq lower than this
+        window: max distance between target and context word
+        negative: number of negative samples
+        cbow: True for CBOW, False for Skip-gram
+        epochs: number of training iterations
+        seed: random seed for reproducibility
+        workers: threads to use (1 for deterministic)
+
+    Returns:
+        Trained gensim Word2Vec model
+    """
     sg = 0 if cbow else 1
 
-    """
-    Create and configure a Word2Vec model.
-    """
+    # model built and trained in one step for deterministic behavior
     model = gensim.models.Word2Vec(
+        sentences=sentences,
         vector_size=vector_size,
         window=window,
         min_count=min_count,
-        workers=workers,
         sg=sg,
         negative=negative,
-        seed=seed
-    )
-
-    """Build vocabulary from the provided list of tokenized sentences"""
-    model.build_vocab(sentences)
-
-    """Train model using corpus with defined number of epochs"""
-    model.train(
-        sentences,
-        total_examples=model.corpus_count,
+        seed=seed,
+        workers=workers,
         epochs=epochs
     )
 
-    """Return the trained Word2Vec model"""
     return model
