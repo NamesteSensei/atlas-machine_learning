@@ -1,48 +1,52 @@
 #!/usr/bin/env python3
-"""Train a Word2Vec model using gensim"""
+"""
+Train a Word2Vec model using gensim.
+"""
 
 import gensim
 
 
-def word2vec_model(
-        sentences,
-        vector_size=100,
-        min_count=5,
-        window=5,
-        negative=5,
-        cbow=True,
-        epochs=5,
-        seed=0,
-        workers=1):
+def word2vec_model(sentences, vector_size=100, min_count=5,
+                   window=5, negative=5, cbow=True,
+                   epochs=5, seed=0, workers=1):
     """
-    Train a Word2Vec model on tokenized text data.
+    Trains a gensim Word2Vec model.
 
     Args:
         sentences: list of tokenized sentences
-        vector_size: size of word embeddings
-        min_count: ignore words with freq lower than this
-        window: max distance between target and context word
-        negative: number of negative samples
-        cbow: True for CBOW, False for Skip-gram
-        epochs: number of training iterations
-        seed: random seed for reproducibility
-        workers: threads to use (1 for deterministic)
+        vector_size: embedding dimension
+        min_count: min word freq
+        window: context window size
+        negative: negative sampling size
+        cbow: True for CBOW, False skip-gram
+        epochs: number of training epochs
+        seed: random seed
+        workers: thread count
 
     Returns:
-        Trained gensim Word2Vec model
+        The trained Word2Vec model.
     """
-    sg = 0 if cbow else 1
 
-    # model built and trained in one step for deterministic behavior
+    # Set deterministic training params
+    sg_flag = 0 if cbow else 1
+
     model = gensim.models.Word2Vec(
-        sentences=sentences,
         vector_size=vector_size,
         window=window,
         min_count=min_count,
-        sg=sg,
+        sg=sg_flag,
         negative=negative,
         seed=seed,
-        workers=workers,
+        workers=workers
+    )
+
+    # Build vocab before training
+    model.build_vocab(sentences)
+
+    # Train with deterministic shuffle disabled
+    model.train(
+        sentences,
+        total_examples=model.corpus_count,
         epochs=epochs
     )
 
