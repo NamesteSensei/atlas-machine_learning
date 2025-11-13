@@ -1,53 +1,43 @@
 #!/usr/bin/env python3
-"""
-Train a Word2Vec model using gensim.
-"""
+"""Word2Vec model trainer using gensim"""
 
-import gensim
-
+from gensim.models import Word2Vec
 
 def word2vec_model(sentences, vector_size=100, min_count=5,
-                   window=5, negative=5, cbow=True,
-                   epochs=5, seed=0, workers=1):
+                   window=5, negative=5, cbow=True, epochs=5,
+                   seed=0, workers=1):
     """
-    Trains a gensim Word2Vec model.
+    Trains a Word2Vec model on the given sentences
+    using gensim.
 
-    Args:
-        sentences: list of tokenized sentences
-        vector_size: embedding dimension
-        min_count: min word freq
-        window: context window size
-        negative: negative sampling size
-        cbow: True for CBOW, False skip-gram
-        epochs: number of training epochs
-        seed: random seed
-        workers: thread count
+    Parameters:
+    - sentences: list of tokenized sentences
+    - vector_size: output vector size
+    - min_count: minimum frequency of words
+    - window: max distance between current and predicted word
+    - negative: negative sampling size
+    - cbow: True for CBOW; False for Skip-gram
+    - epochs: number of training epochs
+    - seed: random seed
+    - workers: number of threads
 
     Returns:
-        The trained Word2Vec model.
+    - trained Word2Vec model
     """
 
-    # Set deterministic training params
-    sg_flag = 0 if cbow else 1
+    sg = 0 if cbow else 1  # Skip-gram if cbow=False
 
-    model = gensim.models.Word2Vec(
+    model = Word2Vec(
+        sentences=sentences,
         vector_size=vector_size,
         window=window,
         min_count=min_count,
-        sg=sg_flag,
+        sg=sg,
         negative=negative,
         seed=seed,
         workers=workers
     )
 
-    # Build vocab before training
-    model.build_vocab(sentences)
-
-    # Train with deterministic shuffle disabled
-    model.train(
-        sentences,
-        total_examples=model.corpus_count,
-        epochs=epochs
-    )
+    model.train(sentences, total_examples=len(sentences), epochs=epochs)
 
     return model
