@@ -1,56 +1,38 @@
 #!/usr/bin/env python3
-"""Module that trains a gensim Word2Vec model."""
+"""
+Convert a gensim Word2Vec model into a Keras Embedding layer.
+"""
 
-import gensim  # /**/ project constraint: only this import is allowed
+import numpy as np
+from tensorflow.keras.layers import Embedding
 
 
-def word2vec_model(sentences, vector_size=100, min_count=5,
-                   window=5, negative=5, cbow=True,
-                   epochs=5, seed=0, workers=1):
-    """Create, build and train a gensim Word2Vec model.
+def gensim_to_keras(model):
+    """
+    Converts a gensim Word2Vec model to a Keras Embedding layer.
 
     Args:
-        sentences (list of list of str): Sentences to be trained on, each
-            sentence is a list of tokens.
-        vector_size (int): Dimensionality of the embedding vectors.
-        min_count (int): Minimum number of occurrences for a word to be
-            included in the vocabulary.
-        window (int): Maximum distance between the current and predicted
-            word within a sentence.
-        negative (int): Number of negative samples used in negative
-            sampling.
-        cbow (bool): If True, use CBOW; if False, use Skip-gram.
-        epochs (int): Number of passes (iterations) over the training data.
-        seed (int): Seed for the random number generator to make training
-            reproducible when workers == 1.
-        workers (int): Number of worker threads to train the model.
+        model: Trained gensim Word2Vec model.
 
     Returns:
-        gensim.models.word2vec.Word2Vec: The trained Word2Vec model.
+        keras.layers.Embedding: a trainable Keras Embedding layer
+        initialized with the gensim weights.
     """
-    # /**/ choose training algorithm: 0 = CBOW, 1 = Skip-gram
-    sg = 0 if cbow else 1
+    # Weight matrix from gensim (vocab_size x vector_size)
+    w2v_weights = model.wv.vectors
 
-    # /**/ create an untrained Word2Vec model with the given hyperparameters
-    model = gensim.models.Word2Vec(
-        vector_size=vector_size,
-        window=window,
-        min_count=min_count,
-        sg=sg,
-        negative=negative,
-        seed=seed,
-        workers=workers
+    vocab_size, vector_size = w2v_weights.shape
+
+    # Keras requires index 0 to be reserved → shift weights by one row
+    embedding_matrix = np.zeros((vocab_size + 1, vector_size))
+    embedding_matrix[1:] = w2v_weights
+
+    # Build Keras Embedding layer
+    embedding_layer = Embedding(
+        input_dim=vocab_size + 1,
+        output_dim=vector_size,
+        weights=[embedding_matrix],
+        trainable=True
     )
 
-    # /**/ build the vocabulary from the provided sentences
-    model.build_vocab(sentences)
-
-    # /**/ train the model for the requested number of epochs
-    model.train(
-        sentences,
-        total_examples=len(sentences),
-        epochs=epochs
-    )
-
-    # /**/ return the trained gensim Word2Vec model
-    return model
+    return embedding_layer
