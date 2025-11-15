@@ -3,8 +3,7 @@
 Convert a gensim Word2Vec model into a Keras Embedding layer.
 """
 
-import numpy as np
-from tensorflow.keras.layers import Embedding
+import tensorflow as tf
 
 
 def gensim_to_keras(model):
@@ -12,26 +11,33 @@ def gensim_to_keras(model):
     Converts a gensim Word2Vec model to a Keras Embedding layer.
 
     Args:
-        model: Trained gensim Word2Vec model.
+        model: A trained gensim Word2Vec model.
 
     Returns:
-        keras.layers.Embedding: a trainable Keras Embedding layer
-        initialized with the gensim weights.
+        A trainable tf.keras.layers.Embedding layer initialized with
+        the gensim word vectors.
     """
-    # Weight matrix from gensim (vocab_size x vector_size)
+    # Extract the gensim weight matrix (vocab_size x vector_size)
     w2v_weights = model.wv.vectors
-
     vocab_size, vector_size = w2v_weights.shape
 
-    # Keras requires index 0 to be reserved → shift weights by one row
-    embedding_matrix = np.zeros((vocab_size + 1, vector_size))
-    embedding_matrix[1:] = w2v_weights
+    # Build TensorFlow-compatible embedding matrix
+    # Reserve index 0 → pad with an all-zero row
+    embedding_matrix = tf.concat(
+        [
+            tf.zeros((1, vector_size), dtype=tf.float32),
+            tf.constant(w2v_weights, dtype=tf.float32)
+        ],
+        axis=0
+    )
 
-    # Build Keras Embedding layer
-    embedding_layer = Embedding(
+    # Create the Keras Embedding layer
+    embedding_layer = tf.keras.layers.Embedding(
         input_dim=vocab_size + 1,
         output_dim=vector_size,
-        weights=[embedding_matrix],
+        embeddings_initializer=tf.keras.initializers.Constant(
+            embedding_matrix
+        ),
         trainable=True
     )
 
