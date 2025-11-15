@@ -14,15 +14,15 @@ def gensim_to_keras(model):
         model: A trained gensim Word2Vec model.
 
     Returns:
-        A trainable tf.keras.layers.Embedding layer initialized with
-        the gensim word vectors.
+        tf.keras.layers.Embedding: a trainable Keras Embedding layer
+        initialized with the gensim word vectors.
     """
-    # Extract the gensim weight matrix (vocab_size x vector_size)
+    # Extract gensim weight matrix: shape (vocab_size, vector_size)
     w2v_weights = model.wv.vectors
     vocab_size, vector_size = w2v_weights.shape
 
-    # Build TensorFlow-compatible embedding matrix
-    # Reserve index 0 → pad with an all-zero row
+    # Build TensorFlow embedding matrix:
+    # reserve index 0 as padding (all zeros), shift gensim weights down by 1
     embedding_matrix = tf.concat(
         [
             tf.zeros((1, vector_size), dtype=tf.float32),
@@ -31,7 +31,7 @@ def gensim_to_keras(model):
         axis=0
     )
 
-    # Create the Keras Embedding layer
+    # Create the Keras Embedding layer with Constant initializer
     embedding_layer = tf.keras.layers.Embedding(
         input_dim=vocab_size + 1,
         output_dim=vector_size,
