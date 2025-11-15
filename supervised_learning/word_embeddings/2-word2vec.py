@@ -24,7 +24,7 @@ def word2vec_model(sentences, vector_size=100, min_count=5,
         workers (int): number of threads.
 
     Returns:
-        gensim.models.Word2Vec: trained model with deterministic ordering.
+        gensim.models.Word2Vec: trained model.
     """
     sg = 0 if cbow else 1
 
@@ -45,12 +45,7 @@ def word2vec_model(sentences, vector_size=100, min_count=5,
         epochs=epochs
     )
 
-    # Deterministic vocabulary ordering
-    ordered_keys = sorted(model.wv.key_to_index)
-    ordered_vectors = [model.wv[key] for key in ordered_keys]
-
-    model.wv.vectors = gensim.matutils.unitvec(ordered_vectors)
-    model.wv.key_to_index = {k: i for i, k in enumerate(ordered_keys)}
-    model.wv.index_to_key = ordered_keys
+    # Match gensim 4.1.2 vocabulary order
+    model.wv.sort_by_descending_frequency()
 
     return model
