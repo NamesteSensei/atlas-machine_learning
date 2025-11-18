@@ -17,10 +17,8 @@ def uni_bleu(references, sentence):
     Returns:
         float: unigram BLEU score
     """
-    # Count unigrams in sentence
     sentence_counter = Counter(sentence)
 
-    # Build max reference counts for each word
     max_ref_counts = {}
     for ref in references:
         ref_counter = Counter(ref)
@@ -29,7 +27,6 @@ def uni_bleu(references, sentence):
                 max_ref_counts.get(word, 0), ref_counter[word]
             )
 
-    # Count clipped matches
     clipped_count = 0
     total_count = sum(sentence_counter.values())
 
@@ -37,16 +34,17 @@ def uni_bleu(references, sentence):
         match = min(sentence_counter[word], max_ref_counts.get(word, 0))
         clipped_count += match
 
-    # Precision = matched unigrams / total unigrams
     precision = clipped_count / total_count if total_count > 0 else 0
 
-    # Brevity penalty
     ref_lens = [len(ref) for ref in references]
-    ref_len = min(ref_lens, key=lambda ref: abs(ref - len(sentence)))
+    ref_len = min(ref_lens, key=lambda r: abs(r - len(sentence)))
+
     if len(sentence) > ref_len:
         bp = 1
     else:
-        bp = math.exp(1 - (ref_len / len(sentence))) if len(sentence) > 0 else 0
+        if len(sentence) == 0:
+            bp = 0
+        else:
+            bp = math.exp(1 - (ref_len / len(sentence)))
 
-    bleu = bp * precision
-    return bleu
+    return bp * precision
