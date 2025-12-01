@@ -17,12 +17,7 @@ class Dataset:
     def __init__(self):
         """
         Class constructor.
-
-        Creates the instance attributes:
-            - data_train: training split
-            - data_valid: validation split
-            - tokenizer_pt: Portuguese tokenizer
-            - tokenizer_en: English tokenizer
+        Initializes training/validation splits and tokenizers.
         """
         self.data_train = tfds.load(
             "ted_hrlr_translate/pt_to_en",
@@ -42,10 +37,10 @@ class Dataset:
 
     def tokenize_dataset(self, data):
         """
-        Creates subword tokenizers for the dataset.
+        Creates sub-word tokenizers for Portuguese and English text.
 
         Args:
-            data (tf.data.Dataset): dataset containing (pt, en) sentence pairs
+            data (tf.data.Dataset): dataset of (pt, en) sentence pairs
 
         Returns:
             tokenizer_pt: Portuguese tokenizer
@@ -57,4 +52,5 @@ class Dataset:
         tokenizer_en = AutoTokenizer.from_pretrained(
             "bert-base-uncased"
         )
+
         return tokenizer_pt, tokenizer_en
