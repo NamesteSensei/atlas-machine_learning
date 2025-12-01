@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Dataset class for the TED HRLR Portuguese-to-English translation dataset.
-Loads training and validation splits and creates the required tokenizers.
+Loads the training and validation splits and initializes the tokenizers.
 """
 
 import tensorflow_datasets as tfds
@@ -13,8 +13,8 @@ class Dataset:
     Loads and prepares the TED HRLR translation dataset.
 
     Attributes:
-        data_train: Training split.
-        data_valid: Validation split.
+        data_train: Training split of the dataset.
+        data_valid: Validation split of the dataset.
         tokenizer_pt: Portuguese tokenizer.
         tokenizer_en: English tokenizer.
     """
@@ -40,10 +40,10 @@ class Dataset:
 
     def tokenize_dataset(self, data):
         """
-        Creates Portuguese and English tokenizers.
+        Creates the Portuguese and English tokenizers.
 
         Args:
-            data: Dataset with paired text samples.
+            data: Dataset containing paired text samples.
 
         Returns:
             tokenizer_pt: Portuguese tokenizer.
