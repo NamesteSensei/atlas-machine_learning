@@ -1,28 +1,14 @@
 #!/usr/bin/env python3
-"""
-Dataset class for the TED HRLR Portuguese-to-English translation dataset.
-Loads the training and validation splits and initializes the tokenizers.
-"""
+"""Dataset class for TED HRLR Portuguese-English translation."""
 
 import tensorflow_datasets as tfds
-import transformers
-
+from transformers import AutoTokenizer
 
 class Dataset:
-    """
-    Loads and prepares the TED HRLR translation dataset.
-
-    Attributes:
-        data_train: Training split of the dataset.
-        data_valid: Validation split of the dataset.
-        tokenizer_pt: Portuguese tokenizer.
-        tokenizer_en: English tokenizer.
-    """
+    """Loads TED HRLR translation dataset and tokenizers."""
 
     def __init__(self):
-        """
-        Initializes dataset splits and tokenizers.
-        """
+        """Initialize training and validation data, and tokenizers."""
         self.data_train = tfds.load(
             'ted_hrlr_translate/pt_to_en',
             split='train',
@@ -35,26 +21,10 @@ class Dataset:
             as_supervised=True
         )
 
-        (self.tokenizer_pt,
-         self.tokenizer_en) = self.tokenize_dataset(self.data_train)
+        self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(self.data_train)
 
     def tokenize_dataset(self, data):
-        """
-        Creates the Portuguese and English tokenizers.
-
-        Args:
-            data: Dataset containing paired text samples.
-
-        Returns:
-            tokenizer_pt: Portuguese tokenizer.
-            tokenizer_en: English tokenizer.
-        """
-        tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
-            "neuralmind/bert-base-portuguese-cased"
-        )
-
-        tokenizer_en = transformers.AutoTokenizer.from_pretrained(
-            "bert-base-uncased"
-        )
-
+        """Creates tokenizers for Portuguese and English."""
+        tokenizer_pt = AutoTokenizer.from_pretrained("neuralmind/bert-base-portuguese-cased")
+        tokenizer_en = AutoTokenizer.from_pretrained("bert-base-uncased")
         return tokenizer_pt, tokenizer_en
