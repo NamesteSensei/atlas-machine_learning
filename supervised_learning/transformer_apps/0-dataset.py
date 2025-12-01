@@ -2,7 +2,7 @@
 """Dataset class for TED HRLR Portuguese-English translation."""
 
 import tensorflow_datasets as tfds
-from transformers import AutoTokenizer
+import transformers
 
 
 class Dataset:
@@ -15,23 +15,30 @@ class Dataset:
             split='train',
             as_supervised=True
         )
-
         self.data_valid = tfds.load(
             'ted_hrlr_translate/pt_to_en',
             split='validation',
             as_supervised=True
         )
-
         self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
             self.data_train
         )
 
     def tokenize_dataset(self, data):
-        """Creates tokenizers for Portuguese and English."""
-        tokenizer_pt = AutoTokenizer.from_pretrained(
+        """
+        Creates tokenizers for Portuguese and English.
+
+        Args:
+            data: tf.data.Dataset, examples as tuples (pt, en)
+
+        Returns:
+            tokenizer_pt: Portuguese tokenizer
+            tokenizer_en: English tokenizer
+        """
+        tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
             "neuralmind/bert-base-portuguese-cased"
         )
-        tokenizer_en = AutoTokenizer.from_pretrained(
+        tokenizer_en = transformers.AutoTokenizer.from_pretrained(
             "bert-base-uncased"
         )
         return tokenizer_pt, tokenizer_en
