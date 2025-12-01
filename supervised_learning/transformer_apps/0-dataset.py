@@ -3,8 +3,6 @@
 Dataset module for loading and tokenizing the TED HRLR Portuguese-to-English
 translation dataset using TensorFlow Datasets and HuggingFace tokenizers.
 """
-
-import tensorflow as tf
 import tensorflow_datasets as tfds
 from transformers import AutoTokenizer
 
@@ -31,24 +29,24 @@ class Dataset:
             as_supervised=True
         )
 
-        self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
-            self.data_train
-        )
+        self.tokenizer_pt, self.tokenizer_en = \
+            self.tokenize_dataset(self.data_train)
 
     def tokenize_dataset(self, data):
         """
-        Creates sub-word tokenizers for Portuguese and English text.
+        Creates tokenizers for Portuguese and English text.
 
         Args:
-            data (tf.data.Dataset): dataset of (pt, en) sentence pairs
+            data: tf.data.Dataset of (pt, en) sentence pairs
 
         Returns:
-            tokenizer_pt: Portuguese tokenizer
-            tokenizer_en: English tokenizer
+            tokenizer_pt: Portuguese BERT tokenizer
+            tokenizer_en: English BERT tokenizer
         """
         tokenizer_pt = AutoTokenizer.from_pretrained(
             "neuralmind/bert-base-portuguese-cased"
         )
+
         tokenizer_en = AutoTokenizer.from_pretrained(
             "bert-base-uncased"
         )
