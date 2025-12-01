@@ -5,7 +5,7 @@ This class loads the training and validation pairs
 and prepares tokenizers for both languages.
 """
 import tensorflow_datasets as tfds
-from transformers import AutoTokenizer
+import transformers
 
 
 class Dataset:
@@ -44,11 +44,11 @@ class Dataset:
             tokenizer_pt: tokenizer for the first language
             tokenizer_en: tokenizer for the second language
         """
-        tokenizer_pt = AutoTokenizer.from_pretrained(
+        tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
             "neuralmind/bert-base-portuguese-cased"
         )
 
-        tokenizer_en = AutoTokenizer.from_pretrained(
+        tokenizer_en = transformers.AutoTokenizer.from_pretrained(
             "bert-base-uncased"
         )
 
