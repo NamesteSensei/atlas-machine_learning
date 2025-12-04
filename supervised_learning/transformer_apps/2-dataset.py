@@ -47,7 +47,7 @@ class Dataset:
         return tf.convert_to_tensor(pt_tokens, dtype=tf.int64), tf.convert_to_tensor(en_tokens, dtype=tf.int64)
 
     def tf_encode(self, pt, en):
-        """Wraps encode in a graph-safe function"""
+        """Wrapper for encode"""
         pt_encoded, en_encoded = tf.py_function(
             func=self.encode,
             inp=[pt, en],
