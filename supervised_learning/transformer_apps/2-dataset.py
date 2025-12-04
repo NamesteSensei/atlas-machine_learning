@@ -3,7 +3,6 @@
 
 import tensorflow_datasets as tfds
 import tensorflow as tf
-import numpy as np
 
 
 class Dataset:
@@ -39,13 +38,13 @@ class Dataset:
 
     def encode(self, pt, en):
         """Encodes with start and end tokens"""
-        pt_t = self.tokenizer_pt.encode(pt.numpy())
-        en_t = self.tokenizer_en.encode(en.numpy())
+        pt_tokens = self.tokenizer_pt.encode(pt.numpy())
+        en_tokens = self.tokenizer_en.encode(en.numpy())
 
-        pt_t = [self.tokenizer_pt.vocab_size] + pt_t + [self.tokenizer_pt.vocab_size + 1]
-        en_t = [self.tokenizer_en.vocab_size] + en_t + [self.tokenizer_en.vocab_size + 1]
+        pt_tokens = [self.tokenizer_pt.vocab_size] + pt_tokens + [self.tokenizer_pt.vocab_size + 1]
+        en_tokens = [self.tokenizer_en.vocab_size] + en_tokens + [self.tokenizer_en.vocab_size + 1]
 
-        return np.array(pt_t), np.array(en_t)
+        return tf.convert_to_tensor(pt_tokens, dtype=tf.int64), tf.convert_to_tensor(en_tokens, dtype=tf.int64)
 
     def tf_encode(self, pt, en):
         """Tensorflow wrapper for encode"""
@@ -54,8 +53,6 @@ class Dataset:
             inp=[pt, en],
             Tout=[tf.int64, tf.int64]
         )
-
         pt_encoded.set_shape([None])
         en_encoded.set_shape([None])
-
         return pt_encoded, en_encoded
