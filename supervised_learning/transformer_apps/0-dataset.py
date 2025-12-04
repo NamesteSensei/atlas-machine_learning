@@ -1,44 +1,37 @@
 #!/usr/bin/env python3
-"""Dataset class for TED HRLR Portuguese-English translation."""
-
+"""Dataset class for machine translation using TED Talks pt_to_en"""
 import tensorflow_datasets as tfds
-import transformers
+from transformers import AutoTokenizer
 
 
 class Dataset:
-    """Loads TED HRLR translation dataset and tokenizers."""
+    """
+    Loads and prepares dataset for machine translation using pre-trained tokenizers.
+    """
 
     def __init__(self):
-        """Initialize training and validation data, and tokenizers."""
-        self.data_train = tfds.load(
-            'ted_hrlr_translate/pt_to_en',
-            split='train',
-            as_supervised=True
-        )
-        self.data_valid = tfds.load(
-            'ted_hrlr_translate/pt_to_en',
-            split='validation',
-            as_supervised=True
-        )
+        """
+        Initializes Dataset instance:
+        - Loads train and validation splits
+        - Creates subword tokenizers for both Portuguese and English
+        """
+        self.data_train = tfds.load('ted_hrlr_translate/pt_to_en',
+                                    split='train', as_supervised=True)
+        self.data_valid = tfds.load('ted_hrlr_translate/pt_to_en',
+                                    split='validation', as_supervised=True)
         self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
-            self.data_train
-        )
+            self.data_train)
 
     def tokenize_dataset(self, data):
         """
-        Creates tokenizers for Portuguese and English.
-
+        Creates subword tokenizers for the dataset using pre-trained models.
         Args:
-            data: tf.data.Dataset, examples as tuples (pt, en)
-
+            data: tf.data.Dataset, tuples of (pt, en)
         Returns:
-            tokenizer_pt: Portuguese tokenizer
-            tokenizer_en: English tokenizer
+            Tuple of (Portuguese tokenizer, English tokenizer)
         """
-        tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
-            "neuralmind/bert-base-portuguese-cased"
-        )
-        tokenizer_en = transformers.AutoTokenizer.from_pretrained(
-            "bert-base-uncased"
-        )
+        tokenizer_pt = AutoTokenizer.from_pretrained(
+            "neuralmind/bert-base-portuguese-cased", use_fast=True)
+        tokenizer_en = AutoTokenizer.from_pretrained(
+            "bert-base-uncased", use_fast=True)
         return tokenizer_pt, tokenizer_en
