@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dataset with tensorflow encode"""
+"""Dataset with encode wrapper"""
 
 import tensorflow_datasets as tfds
 import tensorflow as tf
@@ -9,7 +9,7 @@ class Dataset:
     """Loads data and tokenizers"""
 
     def __init__(self):
-        """Loads and tokenizes data"""
+        """Sets up data pipeline"""
         self.data_train = tfds.load(
             'ted_hrlr_translate/pt_to_en',
             split='train', as_supervised=True)
@@ -25,7 +25,7 @@ class Dataset:
         self.data_valid = self.data_valid.map(self.tf_encode)
 
     def tokenize_dataset(self, data):
-        """Creates tokenizers"""
+        """Builds subword tokenizers"""
         tok_pt = tfds.deprecated.text.SubwordTextEncoder.build_from_corpus(
             (pt.numpy() for pt, _ in data),
             target_vocab_size=2**13)
@@ -37,7 +37,7 @@ class Dataset:
         return tok_pt, tok_en
 
     def encode(self, pt, en):
-        """Encodes with start and end tokens"""
+        """Adds start and end tokens"""
         pt_tokens = self.tokenizer_pt.encode(pt.numpy())
         en_tokens = self.tokenizer_en.encode(en.numpy())
 
@@ -47,7 +47,7 @@ class Dataset:
         return tf.convert_to_tensor(pt_tokens, dtype=tf.int64), tf.convert_to_tensor(en_tokens, dtype=tf.int64)
 
     def tf_encode(self, pt, en):
-        """Tensorflow wrapper for encode"""
+        """Wrapper for encode"""
         pt_encoded, en_encoded = tf.py_function(
             func=self.encode,
             inp=[pt, en],
