@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-"""Test Dataset class"""
+"""Test for Dataset class"""
 
-Dataset = __import__('0-dataset').Dataset
+import tensorflow as tf
+
+Dataset = __import__('2-dataset').Dataset #2-dataset.py
 
 data = Dataset()
-
 for pt, en in data.data_train.take(1):
-    print(pt.numpy().decode('utf-8'))
-    print(en.numpy().decode('utf-8'))
-
+    print(isinstance(pt, tf.Tensor))
+    print(isinstance(en, tf.Tensor))
+    print(pt.dtype)
+    print(en.dtype)
 for pt, en in data.data_valid.take(1):
-    print(pt.numpy().decode('utf-8'))
-    print(en.numpy().decode('utf-8'))
-
-print(type(data.tokenizer_pt))
-print(type(data.tokenizer_en))
+    print(isinstance(pt, tf.Tensor))
+    print(pt.dtype)
+    print(en.dtype)
