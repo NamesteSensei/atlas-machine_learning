@@ -15,3 +15,4 @@ for pt, en in data.data_valid.take(1):
     print(isinstance(pt, tf.Tensor))
     print(pt.dtype)
     print(en.dtype)
+

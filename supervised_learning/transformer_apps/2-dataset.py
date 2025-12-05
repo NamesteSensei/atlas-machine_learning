@@ -6,57 +6,45 @@ import tensorflow as tf
 
 
 class Dataset:
-    """Loads dataset, builds tokenizers, encodes and wraps data"""
+    """Loads dataset and builds tokenizers"""
 
     def __init__(self):
-        """Initializes the dataset and maps encoded examples"""
+        """Initializes dataset and maps encode"""
         self.data_train = tfds.load(
             'ted_hrlr_translate/pt_to_en',
             split='train',
-            as_supervised=True)
+            as_supervised=True
+        )
 
         self.data_valid = tfds.load(
             'ted_hrlr_translate/pt_to_en',
             split='validation',
-            as_supervised=True)
+            as_supervised=True
+        )
 
         self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
-            self.data_train)
+            self.data_train
+        )
 
         self.data_train = self.data_train.map(self.tf_encode)
         self.data_valid = self.data_valid.map(self.tf_encode)
 
     def tokenize_dataset(self, data):
-        """
-        Builds subword tokenizers for pt and en
-
-        Args:
-            data: tf.data.Dataset containing (pt, en) sentence pairs
-
-        Returns:
-            tokenizer_pt, tokenizer_en: SubwordTextEncoder instances
-        """
+        """Builds tokenizers"""
         tok_pt = tfds.deprecated.text.SubwordTextEncoder.build_from_corpus(
             (pt.numpy() for pt, _ in data),
-            target_vocab_size=2**13)
+            target_vocab_size=2**13
+        )
 
         tok_en = tfds.deprecated.text.SubwordTextEncoder.build_from_corpus(
             (en.numpy() for _, en in data),
-            target_vocab_size=2**13)
+            target_vocab_size=2**13
+        )
 
         return tok_pt, tok_en
 
     def encode(self, pt, en):
-        """
-        Encodes pt/en tensors into token lists with start/end tokens
-
-        Args:
-            pt: tf.Tensor (Portuguese sentence)
-            en: tf.Tensor (English sentence)
-
-        Returns:
-            pt_tokens, en_tokens: Tensors of token ids with start/end
-        """
+        """Encodes sentences"""
         pt_tokens = self.tokenizer_pt.encode(pt.numpy())
         en_tokens = self.tokenizer_en.encode(en.numpy())
 
@@ -66,20 +54,14 @@ class Dataset:
         en_tokens = [self.tokenizer_en.vocab_size] + en_tokens + \
             [self.tokenizer_en.vocab_size + 1]
 
-        return tf.convert_to_tensor(pt_tokens, dtype=tf.int64), \
-            tf.convert_to_tensor(en_tokens, dtype=tf.int64)
+        return tf.convert_to_tensor(
+            pt_tokens, dtype=tf.int64
+        ), tf.convert_to_tensor(
+            en_tokens, dtype=tf.int64
+        )
 
     def tf_encode(self, pt, en):
-        """
-        Tensor wrapper for encode method
-
-        Args:
-            pt: tf.Tensor (Portuguese sentence)
-            en: tf.Tensor (English sentence)
-
-        Returns:
-            pt_encoded, en_encoded: Encoded tensors with fixed shape
-        """
+        """Wrapper for encode"""
         pt_encoded, en_encoded = tf.py_function(
             func=self.encode,
             inp=[pt, en],
