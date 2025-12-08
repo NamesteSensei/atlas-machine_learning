@@ -3,20 +3,21 @@
 
 import gensim
 
+
 def word2vec_model(sentences, vector_size=100, min_count=5, window=5,
                    negative=5, cbow=True, epochs=5, seed=0, workers=1):
     """
-    Trains a Word2Vec model on a list of tokenized sentences.
+    Trains a Word2Vec model using only gensim.
 
     Args:
         sentences (list): Tokenized input sentences.
-        vector_size (int): Dimensionality of word vectors.
-        min_count (int): Minimum word frequency to be considered.
-        window (int): Maximum distance between context and target.
-        negative (int): Number of negative samples.
+        vector_size (int): Embedding size.
+        min_count (int): Minimum word frequency.
+        window (int): Context window size.
+        negative (int): Negative sampling size.
         cbow (bool): True for CBOW, False for Skip-gram.
-        epochs (int): Number of training iterations.
-        seed (int): Seed for reproducibility.
+        epochs (int): Number of training epochs.
+        seed (int): Random seed for reproducibility.
         workers (int): Number of worker threads.
 
     Returns:
