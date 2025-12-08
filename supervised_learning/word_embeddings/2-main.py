@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Main file to test the Word2Vec model."""
+"""Tests the word2vec_model function."""
 
 from gensim.test.utils import common_texts
 word2vec_model = __import__('2-word2vec').word2vec_model
