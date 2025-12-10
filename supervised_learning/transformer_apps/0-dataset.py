@@ -1,32 +1,45 @@
 #!/usr/bin/env python3
 """
-Module for loading the TED HRLR Portuguese-to-English translation dataset.
+Dataset class for loading TED HRLR Portuguese–English translation data.
 
-This module provides a function `load_dataset` that loads a specified
-split of the TensorFlow Dataset 'ted_hrlr_translate/pt_to_en'. The returned
-dataset contains (Portuguese_sentence, English_sentence) tensor pairs.
-
-Allowed imports:
-    - tensorflow_datasets as tfds
+This class loads the train and validation splits and initializes two BERT
+tokenizers (Portuguese and English).
 """
 
 import tensorflow_datasets as tfds
 import transformers
 
 
-def load_dataset(split="train"):
+class Dataset:
     """
-    Load a split of the TED HRLR Portuguese-to-English translation dataset.
+    Loads and prepares the TED HRLR dataset for machine translation.
 
-    Args:
-        split (str): Dataset split to load. Common values include "train",
-                     "validation", and "test".
-
-    Returns:
-        tf.data.Dataset: A dataset of `(pt, en)` sentence pairs.
+    Attributes:
+        data_train (tf.data.Dataset): Training dataset split.
+        data_valid (tf.data.Dataset): Validation dataset split.
+        tokenizer_pt: Portuguese BERT tokenizer.
+        tokenizer_en: English BERT tokenizer.
     """
-    return tfds.load(
-        "ted_hrlr_translate/pt_to_en",
-        split=split,
-        as_supervised=True
-    )
+
+    def __init__(self):
+        """Initialize dataset splits and tokenizers."""
+        self.data_train = tfds.load(
+            "ted_hrlr_translate/pt_to_en",
+            split="train",
+            as_supervised=True
+        )
+
+        self.data_valid = tfds.load(
+            "ted_hrlr_translate/pt_to_en",
+            split="validation",
+            as_supervised=True
+        )
+
+        # BERT multilingual tokenizer (best choice for pt & en)
+        self.tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
+            "bert-base-multilingual-cased"
+        )
+
+        self.tokenizer_en = transformers.AutoTokenizer.from_pretrained(
+            "bert-base-multilingual-cased"
+        )
