@@ -11,6 +11,7 @@ Allowed imports:
 """
 
 import tensorflow_datasets as tfds
+import transformers
 
 
 def load_dataset(split="train"):
