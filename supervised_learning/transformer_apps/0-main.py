@@ -8,7 +8,7 @@ for pt, en in data.data_train.take(1):
     print(pt.numpy().decode('utf-8'))
     print(en.numpy().decode('utf-8'))
 
-for pt, en in data.data_valid.take(1):
+for pt, en in data.data_valid.take(2):
     print(pt.numpy().decode('utf-8'))
     print(en.numpy().decode('utf-8'))
 
