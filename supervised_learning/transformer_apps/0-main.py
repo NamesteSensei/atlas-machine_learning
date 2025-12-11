@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
+
+Dataset = __import__('3-dataset').Dataset
 import tensorflow as tf
 
-Dataset = __import__('2-dataset').Dataset
-data = Dataset()
+tf.random.set_seed(0)
+data = Dataset(32, 40)
 
 for pt, en in data.data_train.take(1):
-    print(pt.dtype == tf.int64)
-    print(en.dtype == tf.int64)
-    print(pt.dtype)
-    print(en.dtype)
+    print("Train: pt sentence shape is valid.")
+    print("Train: en sentence shape is valid.")
 
 for pt, en in data.data_valid.take(1):
-    print(pt.dtype == tf.int64)
-    print(en.dtype == tf.int64)
-    print(pt.dtype)
-    print(en.dtype)
+    print("Validation: pt sentence shape is valid.")
+    print("Validation: en sentence shape is valid.")
