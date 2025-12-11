@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 """
-Dataset pipeline for TED HRLR pt-en translation.
-Implements:
-- encode()
-- tf_encode()
-- filtering
-- batching
-- caching
-- shuffling
-- prefetching
+Dataset pipeline for TED HRLR Portuguese–English translation.
+
+Task 3:
+- Add filtering using max_len
+- Add caching, shuffling, padded batching, and prefetching
+- Maintain allowed imports only (tfds, transformers, tf)
 """
 
 import tensorflow_datasets as tfds
@@ -17,21 +14,32 @@ import tensorflow as tf
 
 
 class Dataset:
-    """Dataset loader, tokenizer setup, and tf.data pipeline."""
+    """
+    Builds a full TensorFlow data pipeline for machine translation.
+
+    Attributes:
+        data_train: Training dataset (batched, padded, shuffled).
+        data_valid: Validation dataset (batched, padded).
+        tokenizer_pt: Portuguese tokenizer.
+        tokenizer_en: English tokenizer.
+        start_token: Shared start token index.
+        end_token: Shared end token index.
+    """
 
     def __init__(self, batch_size, max_len):
         """
-        Initialize dataset, tokenizers, and pipeline.
+        Initialize dataset, tokenizers, and full data pipeline.
 
         Args:
-            batch_size: training/validation batch size
-            max_len: maximum number of tokens allowed per sentence
+            batch_size (int): Batch size for training and validation.
+            max_len (int): Maximum allowed token length per sequence.
         """
         raw_train = tfds.load(
             "ted_hrlr_translate/pt_to_en",
             split="train",
             as_supervised=True
         )
+
         raw_valid = tfds.load(
             "ted_hrlr_translate/pt_to_en",
             split="validation",
@@ -49,63 +57,77 @@ class Dataset:
         self.end_token = self.start_token + 1
 
         train = raw_train.map(self.tf_encode)
-        valid = raw_valid.map(self.tf_encode)
-
         train = train.filter(
-            lambda pt, en: tf.logical_and(
-                tf.size(pt) <= max_len,
-                tf.size(en) <= max_len
-            )
+            lambda pt, en: tf.size(pt) <= max_len and tf.size(en) <= max_len
         )
-
-        valid = valid.filter(
-            lambda pt, en: tf.logical_and(
-                tf.size(pt) <= max_len,
-                tf.size(en) <= max_len
-            )
-        )
-
         train = train.cache()
         train = train.shuffle(20000)
 
         train = train.padded_batch(
             batch_size,
-            padded_shapes=( [None], [None] ),
-            padding_values=(tf.cast(0, tf.int64),
-                            tf.cast(0, tf.int64))
+            padded_shapes=([None], [None]),
+            padding_values=(
+                tf.constant(0, dtype=tf.int64),
+                tf.constant(0, dtype=tf.int64)
+            )
+        )
+
+        train = train.prefetch(tf.data.experimental.AUTOTUNE)
+        self.data_train = train
+
+        valid = raw_valid.map(self.tf_encode)
+        valid = valid.filter(
+            lambda pt, en: tf.size(pt) <= max_len and tf.size(en) <= max_len
         )
 
         valid = valid.padded_batch(
             batch_size,
-            padded_shapes=( [None], [None] ),
-            padding_values=(tf.cast(0, tf.int64),
-                            tf.cast(0, tf.int64))
+            padded_shapes=([None], [None]),
+            padding_values=(
+                tf.constant(0, dtype=tf.int64),
+                tf.constant(0, dtype=tf.int64)
+            )
         )
 
-        train = train.prefetch(tf.data.experimental.AUTOTUNE)
-
-        self.data_train = train
         self.data_valid = valid
 
     def encode(self, pt, en):
-        """Python tokenization function used by tf.py_function."""
-        pt_s = pt.numpy().decode("utf-8")
-        en_s = en.numpy().decode("utf-8")
+        """
+        Encode PT and EN sentences into token lists.
 
-        pt_ids = self.tokenizer_pt.encode(pt_s, add_special_tokens=False)
-        en_ids = self.tokenizer_en.encode(en_s, add_special_tokens=False)
+        Args:
+            pt (tf.Tensor): Portuguese text.
+            en (tf.Tensor): English text.
 
-        pt_out = [self.start_token] + pt_ids + [self.end_token]
-        en_out = [self.start_token] + en_ids + [self.end_token]
+        Returns:
+            tuple: (pt_tokens, en_tokens) as Python lists.
+        """
+        pt_text = pt.numpy().decode("utf-8")
+        en_text = en.numpy().decode("utf-8")
 
-        return pt_out, en_out
+        pt_ids = self.tokenizer_pt.encode(pt_text, add_special_tokens=False)
+        en_ids = self.tokenizer_en.encode(en_text, add_special_tokens=False)
+
+        pt_tokens = [self.start_token] + pt_ids + [self.end_token]
+        en_tokens = [self.start_token] + en_ids + [self.end_token]
+
+        return pt_tokens, en_tokens
 
     def tf_encode(self, pt, en):
-        """TensorFlow wrapper for encode()."""
+        """
+        TensorFlow wrapper around encode().
+
+        Args:
+            pt (tf.Tensor): Portuguese input string.
+            en (tf.Tensor): English input string.
+
+        Returns:
+            tuple: (pt_tensor, en_tensor) as int64 tensors.
+        """
         pt_out, en_out = tf.py_function(
             func=self.encode,
             inp=[pt, en],
-            Tout=[tf.int64, tf.int64]
+            tout=[tf.int64, tf.int64]
         )
 
         pt_out.set_shape([None])
