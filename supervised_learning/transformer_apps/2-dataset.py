@@ -5,7 +5,6 @@ Dataset class for tokenizing the TED HRLR Portuguese–English dataset.
 Task 2:
 - Add tf_encode() as a TensorFlow wrapper for encode()
 - Tokenize the dataset inside __init__
-- Ensure allowed imports only
 """
 
 import tensorflow_datasets as tfds
@@ -28,7 +27,6 @@ class Dataset:
 
     def __init__(self):
         """Initialize dataset, tokenizers, and tf.data mappings."""
-
         raw_train = tfds.load(
             "ted_hrlr_translate/pt_to_en",
             split="train",
@@ -44,7 +42,6 @@ class Dataset:
         self.tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
             "bert-base-multilingual-cased"
         )
-
         self.tokenizer_en = transformers.AutoTokenizer.from_pretrained(
             "bert-base-multilingual-cased"
         )
@@ -57,7 +54,7 @@ class Dataset:
 
     def encode(self, pt, en):
         """
-        Python tokenization logic.
+        Tokenize sentences using the Python tokenizers.
 
         Args:
             pt (tf.Tensor): Portuguese text tensor.
