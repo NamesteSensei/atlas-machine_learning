@@ -4,8 +4,9 @@ Task 5 Main File
 """
 
 import tensorflow as tf
-from 3-dataset import Dataset
-from 5-train import train_transformer
+
+Dataset = __import__('3-dataset').Dataset
+train_transformer = __import__('5-train').train_transformer
 
 
 def main():
@@ -14,17 +15,11 @@ def main():
     """
     tf.random.set_seed(0)
 
-    dataset = Dataset(
-        batch_size=16,
-        max_len=40
-    )
+    dataset = Dataset(batch_size=16, max_len=40)
 
-    transformer = train_transformer(
-        dataset=dataset,
-        epochs=1
-    )
+    transformer = train_transformer(dataset=dataset, epochs=1)
 
-    print("Training completed successfully")
+    print(type(transformer))
 
 
 if __name__ == "__main__":
