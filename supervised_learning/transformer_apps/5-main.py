@@ -1,26 +1,20 @@
 #!/usr/bin/env python3
 """
-Task 5 Main File
+Main test script for Task 5: Training the Transformer
 """
-
 import tensorflow as tf
-
-Dataset = __import__('3-dataset').Dataset
 train_transformer = __import__('5-train').train_transformer
 
 
-def main():
+def test_train():
     """
-    Train and test the Transformer model.
+    Sets the random seed and runs the training function
     """
     tf.random.set_seed(0)
-
-    dataset = Dataset(batch_size=16, max_len=40)
-
-    transformer = train_transformer(dataset=dataset, epochs=1)
-
+    # Parameters: N, dm, h, hidden, max_len, batch_size, epochs
+    transformer = train_transformer(4, 128, 8, 512, 32, 40, 2)
     print(type(transformer))
 
 
 if __name__ == "__main__":
-    main()
+    test_train()
