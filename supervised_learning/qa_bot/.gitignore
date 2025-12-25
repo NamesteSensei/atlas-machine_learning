@@ -1,0 +1,16 @@
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+__MACOSX/
+
+# Jupyter / logs
+.ipynb_checkpoints/
+
+# HuggingFace cache (optional)
+.cache/
