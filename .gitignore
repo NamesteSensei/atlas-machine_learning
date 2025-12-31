@@ -66,3 +66,4 @@ logs/
 *.tmp
  Added Bitcoin price forecasting project with LSTM model, live data integration, and automated retraining features)
 .venv/
+.venv/
