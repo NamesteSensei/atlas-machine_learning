@@ -1,22 +1,20 @@
 #!/usr/bin/env python3
 """
-Dataset loader and tokenizer for Portuguese to English translation using
-TensorFlow Datasets and Hugging Face Transformers.
+Loads training text and prepares token tools.
 """
 
 import tensorflow_datasets as tfds
-from transformers import AutoTokenizer
+import transformers
 
 
 class Dataset:
     """
-    Loads and preprocesses the TED Talks pt_to_en dataset for translation.
+    Manages two language inputs and token tools.
     """
 
     def __init__(self):
         """
-        Initializes Dataset by loading train and validation splits and setting
-        up the tokenizers.
+        Sets up training and validation pairs and token tools.
         """
         self.data_train = tfds.load(
             'ted_hrlr_translate/pt_to_en',
@@ -28,20 +26,20 @@ class Dataset:
             split='validation',
             as_supervised=True
         )
-        self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset()
+        self.tokenizer_pt, self.tokenizer_en = self._load_tokens()
 
-    def tokenize_dataset(self):
+    def _load_tokens(self):
         """
-        Loads pre-trained BERT tokenizers for Portuguese and English.
+        Creates tools that map text to numbers.
 
         Returns:
-            tuple: (tokenizer_pt, tokenizer_en)
+            tuple: tools for Portuguese and English
         """
-        tokenizer_pt = AutoTokenizer.from_pretrained(
+        tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
             'neuralmind/bert-base-portuguese-cased',
             use_fast=True
         )
-        tokenizer_en = AutoTokenizer.from_pretrained(
+        tokenizer_en = transformers.AutoTokenizer.from_pretrained(
             'bert-base-uncased',
             use_fast=True
         )
