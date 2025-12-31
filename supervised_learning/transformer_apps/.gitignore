@@ -1,3 +1,27 @@
-.venv/
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Virtual environment
+.venv/
+env/
+ENV/
+venv/
+*.env
+
+# VSCode or IDEs
+.vscode/
+.idea/
+
+# OS / Misc
+.DS_Store
+Thumbs.db
+
