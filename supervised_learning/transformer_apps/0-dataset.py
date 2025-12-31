@@ -15,8 +15,8 @@ class Dataset:
 
     def __init__(self):
         """
-        Initializes the Dataset instance by loading the train and validation
-        splits, and preparing the tokenizers.
+        Initializes Dataset by loading train and validation splits and setting
+        up the tokenizers.
         """
         self.data_train = tfds.load(
             'ted_hrlr_translate/pt_to_en',
@@ -28,14 +28,11 @@ class Dataset:
             split='validation',
             as_supervised=True
         )
-        self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(self.data_train)
+        self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset()
 
-    def tokenize_dataset(self, data):
+    def tokenize_dataset(self):
         """
-        Loads pre-trained BERT tokenizers for both Portuguese and English.
-
-        Args:
-            data (tf.data.Dataset): Dataset containing (pt, en) sentence pairs.
+        Loads pre-trained BERT tokenizers for Portuguese and English.
 
         Returns:
             tuple: (tokenizer_pt, tokenizer_en)
