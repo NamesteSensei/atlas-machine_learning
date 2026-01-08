@@ -1,0 +1,39 @@
+# Ignore Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore virtual environment
+venv/
+
+# Ignore pip’s dependency resolver files
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# VSCode or other editor-specific settings
+.vscode/
+.idea/
+
+# Test coverage files
+.coverage
+htmlcov/
+.tox/
+.cache/
+
+# Pytest
+.pytest_cache/
+
+# Jupyter/IPython
+.ipynb_checkpoints/
+
+# Environment variable files (if used)
+.env
+.env.*
