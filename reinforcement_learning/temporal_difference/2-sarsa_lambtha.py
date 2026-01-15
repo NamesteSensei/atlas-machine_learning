@@ -31,7 +31,6 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
         state, _ = env.reset()
         elig = np.zeros((n_states, n_actions))
 
-        # Choose action using epsilon-greedy policy
         if np.random.rand() < epsilon:
             action = np.random.randint(n_actions)
         else:
@@ -41,20 +40,16 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
             next_state, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
 
-            # Choose next action using epsilon-greedy
             if np.random.rand() < epsilon:
                 next_action = np.random.randint(n_actions)
             else:
                 next_action = np.argmax(Q[next_state])
 
-            # TD Error
-            td_target = reward + gamma * Q[next_state, next_action] * (not done)
+            td_target = reward
+            td_target += gamma * Q[next_state, next_action] * (not done)
             td_error = td_target - Q[state, action]
 
-            # Update eligibility trace
             elig[state, action] += 1
-
-            # Update Q-table and decay eligibility traces
             Q += alpha * td_error * elig
             elig *= gamma * lambtha
 
@@ -64,7 +59,6 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
             state = next_state
             action = next_action
 
-        # Epsilon decay after each episode
         epsilon = max(min_epsilon, epsilon * (1 - epsilon_decay))
 
     return Q
