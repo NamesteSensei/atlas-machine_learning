@@ -5,7 +5,7 @@ import numpy as np
 policy_gradient = __import__('policy_gradient').policy_gradient
 
 
-def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
+def train(env, nb_episodes, alpha=0.000045, gamma=0.98, show_result=False):
     """
     Train a policy using the REINFORCE algorithm.
 
@@ -14,6 +14,7 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
         nb_episodes (int): number of episodes to train on
         alpha (float): learning rate
         gamma (float): discount factor
+        show_result (bool): if True, render every 1000 episodes
 
     Returns:
         list: total rewards per episode
@@ -27,9 +28,12 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
         state, _ = env.reset()
         grads, rewards = [], []
         total_reward = 0
-
         done = False
+
         while not done:
+            if show_result and episode % 1000 == 0:
+                env.render()
+
             action, grad = policy_gradient(state, weight)
             state, reward, terminated, truncated, _ = env.step(action)
             grads.append(grad)
@@ -45,10 +49,10 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
             returns.insert(0, G)
         returns = np.array(returns)
 
-        # Normalize returns (optional but improves stability)
+        # Normalize returns
         returns = (returns - np.mean(returns)) / (np.std(returns) + 1e-8)
 
-        # Update weights using accumulated gradients
+        # Policy weight update
         for g, R in zip(grads, returns):
             weight += alpha * g * R
 
