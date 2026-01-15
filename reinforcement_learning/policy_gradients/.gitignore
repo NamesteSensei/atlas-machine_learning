@@ -1,0 +1,29 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+env/
+venv/
+.venv/
+rl_env/
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# Plot/image/output files
+*.png
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Matplotlib cache
+.matplotlib/
+
+# VSCode settings (if any)
+.vscode/
+
