@@ -3,7 +3,7 @@
 This project implements core reinforcement learning algorithms using
 **Temporal Difference (TD) Learning**, starting with **Monte Carlo prediction**.
 
-It is built using Python 3.9 and OpenAI's `gymnasium` environment.
+It is built using Python 3.9 and OpenAI's gymnasium environment.
 
 ## Features
 
