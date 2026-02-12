@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+
+import matplotlib
+matplotlib.use('TkAgg')  # Force GUI backend
+
+import tensorflow as tf
+import tensorflow_datasets as tfds
+import matplotlib.pyplot as plt
+
+flip_image = __import__('0-flip').flip_image
+
+tf.random.set_seed(0)
+
+doggies = tfds.load('stanford_dogs', split='train', as_supervised=True)
+
+for image, _ in doggies.shuffle(10).take(1):
+    flipped = flip_image(image)
+
+    plt.imshow(flipped)
+    plt.axis('off')
+    plt.title("Horizontally Flipped Dog")
+    plt.show()
+
+print("Done.")
