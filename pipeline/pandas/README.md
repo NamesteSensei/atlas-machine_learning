@@ -1,45 +1,85 @@
-# Pandas Data Pipeline
+# Pandas Data Pipeline Project
 
-This project explores data manipulation using **Pandas 2.2.2** and **NumPy 1.25.2** in a controlled Python 3.9 environment.
+## Overview
 
-The goal is to build strong foundational skills in:
+This project demonstrates practical data analysis using **Pandas** and **NumPy** on historical Bitcoin datasets (Coinbase and Bitstamp).  
 
-- Creating and manipulating `pd.DataFrame`
-- Working with `pd.Series`
-- Indexing and slicing
-- Boolean filtering
-- Sorting and restructuring data
-- Merging and concatenating DataFrames
-- Extracting statistical insights
-- Data visualization using matplotlib
+The objective is to clean, transform, manipulate, aggregate, and visualize time-series financial data while following strict Python style and documentation standards.
 
 ---
 
-## 🛠 Environment
+## Environment
 
-The project uses a reproducible virtual environment:
+- Python 3.9
+- numpy==1.25.2
+- pandas==2.2.2
+- matplotlib
+- Ubuntu 20.04 LTS
+- pycodestyle compliant
 
-- Python 3.9.25
-- NumPy 1.25.2
-- Pandas 2.2.2
-- Matplotlib 3.9.4
+Dependencies are locked via `requirements.txt`.
 
-All dependencies are frozen in:
+---
 
+## Key Concepts Covered
 
-To recreate the environment:
+- Creating DataFrames from NumPy arrays and dictionaries
+- Loading CSV data into Pandas
+- Indexing and slicing DataFrames
+- Sorting and filtering data
+- Handling missing values
+- MultiIndex and hierarchical indexing
+- Concatenation and merging
+- Statistical analysis with `describe()`
+- Time-series resampling
+- Data visualization with Matplotlib
 
-```bash
-python3.9 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+---
 
+## Data Processing Workflow
 
-pipeline/pandas/
-│
-├── 0-from_numpy.py
-├── 0-main.py
-├── requirements.txt
-├── README.md
-└── .gitignore
+The final pipeline performs:
 
+1. Data loading
+2. Column renaming
+3. Timestamp → Datetime conversion
+4. Indexing on time
+5. Missing value handling
+6. Daily resampling and aggregation
+7. Visualization of 2017+ Bitcoin trends
+
+---
+
+## Final Aggregation Logic (Daily)
+
+- High → max  
+- Low → min  
+- Open → mean  
+- Close → mean  
+- Volume_(BTC) → sum  
+- Volume_(Currency) → sum  
+
+---
+
+## Outcome
+
+The final visualization produces a daily Bitcoin price trend starting from 2017, demonstrating real-world time-series preprocessing and aggregation techniques.
+
+---
+
+## Learning Outcome
+
+After completing this project, you should confidently understand:
+
+- What Pandas is
+- How to build and manipulate DataFrames
+- Time-series indexing and resampling
+- Cleaning financial datasets
+- Producing aggregated analytical outputs
+- Visualizing structured data
+
+---
+
+## Author
+
+Christopher – Atlas Machine Learning
