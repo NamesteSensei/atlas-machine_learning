@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 """
 Module that sorts a DataFrame in reverse chronological order
 and transposes it.
@@ -19,8 +18,5 @@ def flip_switch(df):
     Returns:
         pandas.DataFrame: Transformed DataFrame.
     """
-    # Sort by Timestamp descending
-    sorted_df = df.sort_values(by="Timestamp", ascending=False)
-
-    # Transpose the sorted DataFrame
-    return sorted_df.transpose()
+    df = df.sort_values(by="Timestamp", ascending=False)
+    return df.T
