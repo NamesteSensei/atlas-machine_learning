@@ -16,5 +16,6 @@ def high(df):
     Returns:
         pandas.DataFrame: Sorted DataFrame.
     """
-    return df.sort_values(by="High", ascending=False)
-
+    return df.sort_values(
+        by="High", ascending=False
+    )

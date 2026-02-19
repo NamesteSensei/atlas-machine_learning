@@ -18,5 +18,6 @@ def flip_switch(df):
     Returns:
         pandas.DataFrame: Transformed DataFrame.
     """
-    df = df.sort_values(by="Timestamp", ascending=False)
-    return df.T
+    return df.sort_values(
+        by="Timestamp", ascending=False
+    ).transpose()
