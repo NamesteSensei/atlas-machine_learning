@@ -1,66 +1,54 @@
 #!/usr/bin/env python3
-"""
-Module that cleans, aggregates, and visualizes Bitcoin data.
-"""
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from_file = __import__('2-from_file').from_file
 
+df = from_file(
+    'coinbaseUSD_1-min_data_2014-12-01_to_2019-01-09.csv',
+    ','
+)
 
-def visualize(df):
-    """
-    Clean, transform, and aggregate the DataFrame,
-    then plot daily data from 2017 onward.
+# Remove Weighted_Price column
+df = df.drop(columns=["Weighted_Price"])
 
-    Args:
-        df (pandas.DataFrame): Input DataFrame.
+# Rename Timestamp to Date
+df = df.rename(columns={"Timestamp": "Date"})
 
-    Returns:
-        pandas.DataFrame: Transformed daily DataFrame.
-    """
-    # Remove Weighted_Price column
-    df = df.drop(columns=["Weighted_Price"])
+# Convert timestamp to datetime
+df["Date"] = pd.to_datetime(df["Date"], unit="s")
 
-    # Rename Timestamp to Date
-    df = df.rename(columns={"Timestamp": "Date"})
+# Set Date as index
+df = df.set_index("Date")
 
-    # Convert timestamp to datetime
-    df["Date"] = pd.to_datetime(df["Date"], unit="s")
+# Fill missing values
+df["Close"] = df["Close"].ffill()
 
-    # Set Date as index
-    df = df.set_index("Date")
+df["High"] = df["High"].fillna(df["Close"])
+df["Low"] = df["Low"].fillna(df["Close"])
+df["Open"] = df["Open"].fillna(df["Close"])
 
-    # Fill missing Close with previous value
-    df["Close"] = df["Close"].ffill()
+df["Volume_(BTC)"] = df["Volume_(BTC)"].fillna(0)
+df["Volume_(Currency)"] = df["Volume_(Currency)"].fillna(0)
 
-    # Fill High, Low, Open with corresponding Close
-    df["High"] = df["High"].fillna(df["Close"])
-    df["Low"] = df["Low"].fillna(df["Close"])
-    df["Open"] = df["Open"].fillna(df["Close"])
+# Filter from 2017 onward
+df = df["2017":]
 
-    # Fill volume columns with 0
-    df["Volume_(BTC)"] = df["Volume_(BTC)"].fillna(0)
-    df["Volume_(Currency)"] = df["Volume_(Currency)"].fillna(0)
+# Resample daily with required aggregations
+df = df.resample("D").agg({
+    "High": "max",
+    "Low": "min",
+    "Open": "mean",
+    "Close": "mean",
+    "Volume_(BTC)": "sum",
+    "Volume_(Currency)": "sum"
+})
 
-    # Filter from 2017 onward
-    df = df[df.index >= "2017-01-01"]
+print(df)
 
-    # Daily aggregation
-    df_daily = df.resample("D").agg({
-        "High": "max",
-        "Low": "min",
-        "Open": "mean",
-        "Close": "mean",
-        "Volume_(BTC)": "sum",
-        "Volume_(Currency)": "sum"
-    })
-
-    # Plot Close price
-    df_daily["Close"].plot(figsize=(10, 5))
-    plt.title("Bitcoin Daily Close Price (2017+)")
-    plt.xlabel("Date")
-    plt.ylabel("Close Price")
-    plt.tight_layout()
-    plt.show()
-
-    return df_daily
+# Plot Close price
+df["Close"].plot(figsize=(12, 6))
+plt.title("Bitcoin Daily Close Price (2017+)")
+plt.xlabel("Date")
+plt.ylabel("Price (USD)")
+plt.show()
