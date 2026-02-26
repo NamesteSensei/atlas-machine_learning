@@ -3,8 +3,6 @@
 Module that converts selected DataFrame values to a NumPy array.
 """
 
-import pandas as pd
-
 
 def array(df):
     """
@@ -17,8 +15,5 @@ def array(df):
     Returns:
         numpy.ndarray: Selected values as NumPy array.
     """
-    # Select last 10 rows and required columns
     selected = df[["High", "Close"]].tail(10)
-
-    # Convert to NumPy array
     return selected.to_numpy()
