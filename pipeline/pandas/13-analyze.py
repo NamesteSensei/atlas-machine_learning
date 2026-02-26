@@ -1,23 +1,20 @@
 #!/usr/bin/env python3
-
-
 """
-Module that computes descriptive statistics for a DataFrame.
+Module that computes descriptive statistics of a DataFrame.
 """
-
-import pandas as pd
 
 
 def analyze(df):
     """
-    Compute descriptive statistics for all columns
-    except the Timestamp column.
+    Compute descriptive statistics for all columns except Timestamp.
 
     Args:
         df (pandas.DataFrame): Input DataFrame.
 
     Returns:
-        pandas.DataFrame: DataFrame of descriptive statistics.
+        pandas.DataFrame: Descriptive statistics.
     """
-    df = df.drop(columns=["Timestamp"])
+    if "Timestamp" in df.columns:
+        df = df.drop(columns=["Timestamp"])
+
     return df.describe()
