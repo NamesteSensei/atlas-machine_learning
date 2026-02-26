@@ -4,8 +4,6 @@ Module that sorts a DataFrame in reverse chronological order
 and transposes it.
 """
 
-import pandas as pd
-
 
 def flip_switch(df):
     """
@@ -18,6 +16,5 @@ def flip_switch(df):
     Returns:
         pandas.DataFrame: Transformed DataFrame.
     """
-    return df.sort_values(
-        by="Timestamp", ascending=False
-    ).transpose()
+    sorted_df = df.sort_values(by="Timestamp", ascending=False)
+    return sorted_df.transpose()
