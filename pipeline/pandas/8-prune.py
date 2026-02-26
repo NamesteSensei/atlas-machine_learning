@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
-
 """
-Module that removes rows with NaN values in the Close column.
+Module that removes rows where Close contains NaN values.
 """
-
-import pandas as pd
 
 
 def prune(df):
     """
-    Remove rows where Close has NaN values.
+    Remove rows where the Close column has NaN values.
 
     Args:
         df (pandas.DataFrame): Input DataFrame.
