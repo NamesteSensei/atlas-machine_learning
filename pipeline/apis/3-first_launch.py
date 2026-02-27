@@ -14,7 +14,7 @@ def get_first_launch():
     """
     Fetches and prints the first SpaceX launch details.
     """
-    launches_url = "https://api.spacexdata.com/v4/launches"
+    launches_url = "https://api.spacexdata.com/v4/launches/upcoming"
     rockets_url = "https://api.spacexdata.com/v4/rockets/"
     launchpads_url = "https://api.spacexdata.com/v4/launchpads/"
 
