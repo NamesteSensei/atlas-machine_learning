@@ -1,69 +1,41 @@
+# Virtual environments
+venv/
+.env/
 
-# Ignore Python bytecode and cache
+# Python cache
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
 *.pyd
 
-# Ignore Jupyter notebook checkpoints
-.ipynb_checkpoints/
-
-# Ignore virtual environments
-venv*/
-.env/
-env/
-venv_auto*/
-venv39/
-
-# Ignore large model/data files
-*.h5
-*.hdf5
-*.ckpt
-*.pb
-*.npz
+# ML model artifacts
 *.npy
 *.pkl
 *.joblib
 *.onnx
+*.pickle
 
-# Ignore dataset files and temporary storage
+# Dataset files
 *.csv
 *.tsv
 *.zip
 *.tar
 *.gz
-*.pickle
 *.db
 
-# Ignore OS/IDE files
+# OS / IDE
 .DS_Store
 .idea/
 .vscode/
 
-# Ignore logs
+# Logs
 *.log
 
-# Ignore TensorFlow / PyTorch export artifacts
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# TensorFlow / PyTorch artifacts
 saved_model/
 checkpoint/
-=======
-# Virtual environment
-venv/
-__pycache__/
-*.pyc
-
-# Data and models
-btc_data/*.csv
-btc_data/*.zip
-models/*.h5
-models/*.keras
-wandb/
-logs/
-.DS_Store
-
-# System files
-*.log
-*.tmp
- Added Bitcoin price forecasting project with LSTM model, live data integration, and automated retraining features)
-.venv/
-.venv/
