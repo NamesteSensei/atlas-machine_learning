@@ -39,3 +39,7 @@ htmlcov/
 # TensorFlow / PyTorch artifacts
 saved_model/
 checkpoint/
+
+# SQL test datasets
+pipeline/databases/temperatures.sql
+pipeline/databases/setup.sql
